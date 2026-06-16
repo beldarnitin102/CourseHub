@@ -94,3 +94,19 @@ exports.getAllUserDetails = async (req, res) => {
   }
 };
 
+
+exports.updateDisplayPicture = async (req,res) => {
+  try {
+    
+  } catch (err) {
+    
+  }
+}
+
+exports.getEnrolledCourses = async (req,res) => {
+  try {
+    
+  } catch (err) {
+    
+  }
+}

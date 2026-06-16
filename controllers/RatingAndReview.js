@@ -133,3 +133,7 @@ exports.getAllRatingAndReview = async (req, res) => {
     });
   }
 };
+
+exports.getAllRating = async (req,res) => {
+  
+}

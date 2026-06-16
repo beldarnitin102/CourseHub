@@ -50,7 +50,7 @@ exports.createCourse = async (req, res) => {
 
     //upload image to cloudinary
 
-    const thumbnail = await uploadImageToCloudinary(
+    const thumbnailuploder = await uploadImageToCloudinary(
       thumbnail,
       process.env.FOLDER_NAME,
     );

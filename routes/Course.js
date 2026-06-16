@@ -1,9 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
-const {createCourse, getAllCourses, getCourseDetails} = require("../controllers/Course")
+const {createCourse, showAllCourses, getCourseDetails} = require("../controllers/Course")
 
-const {showAllCaregories, createCategories, categoryPageDetails} = require("../controllers/Catgorey")
+const {showAllCatgorey, createCatgorey, categoriesPageDetails} = require("../controllers/Catgorey")
 
 const {createSection, updateSection, deleteSection } = require("../controllers/Section")
 
@@ -11,23 +11,28 @@ const {createSubSection, updateSubSection, deleteSubSection} = require("../contr
 
 const {createRating, getAverageRating, getAllRating, getAllRatingAndReview} = require("../controllers/RatingAndReview")
 
-const {auth, isInstructor, isStudent,isAdmin} = require("../middleware/auth")
+const {auth, isInstructor, isStudent} = require("../middleware/auth")
 
 router.post("../createCourse", auth,isInstructor,createCourse)
 router.post("../addSection", auth,isInstructor,createSection)
 router.post("../updateSection", auth,isInstructor,updateSection)
 router.post("../deleteSection", auth,isInstructor,deleteSection)
 
-router.get("/getAllCourses", getAllCourses)
+router.get("/getAllCourses", showAllCourses)
+router.get("/getCourseDetails", getCourseDetails)
 
 router.post("/createSubSection", createSubSection)
 router.post("/updateSubSection", updateSubSection)
 router.post("/deleteSubSection", deleteSubSection)
 
 
-router.get("/showAllCatogories", showAllCaregories)
-router.post("/getCategoryPageDetails", categoryPageDetails)
+router.get("/showAllCatogories", showAllCatgorey)
+router.post("/getCategoryPageDetails", categoriesPageDetails)
+router.post("/createCatgorey", createCatgorey)
 
 router.post("/createRating", auth,isStudent,createRating)
 router.get("/getAverageRating", getAverageRating)
-router.get("/getReviews", getAllRatingAndReview)
+router.get("/getAllRatingAndReview", getAllRatingAndReview)
+router.get("/getAllRating", getAllRating)
+
+module.exports = router

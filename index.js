@@ -17,7 +17,7 @@ const cors = require("cors")
 
 const cookieParser = require("cookie-parser")
 
-const {cloudinaryConnect} = require(".//config/cloudinary")
+const {cloudinaryConnect} = require("./config/cloudinary")
 cloudinaryConnect()
 
 const fileUpload = require("express-fileupload")

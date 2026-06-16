@@ -59,5 +59,20 @@ exports.createSubSection = async (req, res) => {
 };
 
 
+exports.updateSubSection = async (req,res) => {
+  try {
+    
+  } catch (err) {
+    
+  }
+}
+
+exports.deleteSubSection = async (req,res) => {
+  try {
+    
+  } catch (err) {
+    
+  }
+}
 //todo update subsection and delete subsection 
 
