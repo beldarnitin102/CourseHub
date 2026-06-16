@@ -1,5 +1,4 @@
-const Catgorey = require("../models/Catgorey");
-const { create } = require("../models/User");
+const Category = require("../models/Category");
 
 exports.createCatgorey = async (req, res) => {
   try {
@@ -12,7 +11,7 @@ exports.createCatgorey = async (req, res) => {
       });
     }
 
-    const tagsDetails = await Catgorey.create({
+    const tagsDetails = await Category.create({
       name: name,
       description: description,
     });
@@ -32,7 +31,7 @@ exports.createCatgorey = async (req, res) => {
 
 exports.showAllCatgorey = async (req, res) => {
   try {
-    const allTags = await Catgorey.find({}, { name: true, description: true });
+    const allTags = await Category.find({}, { name: true, description: true });
 
     return res.status(200).json({
       success: true,
@@ -51,7 +50,7 @@ exports.categoriesPageDetails = async (req, res) => {
   try {
     const { categoryId } = req.body;
 
-    const selectCatogory = await Catgorey.findById(categoryId)
+    const selectCatogory = await Category.findById(categoryId)
       .populate("Courses")
       .exec();
 
@@ -62,7 +61,7 @@ exports.categoriesPageDetails = async (req, res) => {
       });
     }
 
-    const diffCategries = await Catgorey.find({
+    const diffCategries = await Category.find({
       _id: { $ne: categoryId },
     })
       .populate("Courses")
