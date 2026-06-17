@@ -9,6 +9,6 @@ router.delete("/deleteProfile", deleteAccount)
 router.put("/updateProfile", auth, UpdateProfile)
 router.get("/getUserDetails", auth, getAllUserDetails)
 router.get("/getEnrolledCourses", auth, getEnrolledCourses)
-router.get("/updateDisplayPicture", auth, updateDisplayPicture)
+router.put("/updateDisplayPicture", auth, updateDisplayPicture)
 
 module.exports = router

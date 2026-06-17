@@ -1,5 +1,6 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploder");
 
 exports.UpdateProfile = async (req, res) => {
   try {
@@ -7,7 +8,7 @@ exports.UpdateProfile = async (req, res) => {
 
     const id = req.user.id;
 
-    if (!contactNumberm || !gender) {
+    if (!contactNumber || !gender) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -20,7 +21,7 @@ exports.UpdateProfile = async (req, res) => {
 
     const profileDetails = await Profile.findById(profileId);
 
-    profileDetails.dateOfBirth = dateOfBirth;
+    profileDetails.dataOfBirth = dataOfBirth;
     profileDetails.about = about;
     profileDetails.gender = gender;
     profileDetails.contactNumber = contactNumber;
@@ -33,7 +34,7 @@ exports.UpdateProfile = async (req, res) => {
       profileDetails,
     });
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
     return res.status(500).json({
       success: false,
       message: "getting error in updating the Profile",
@@ -85,6 +86,7 @@ exports.getAllUserDetails = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: " User data fetch succsfully ",
+      data: userDetails,
     });
   } catch (err) {
     return res.status(500).json({
@@ -95,18 +97,73 @@ exports.getAllUserDetails = async (req, res) => {
 };
 
 
-exports.updateDisplayPicture = async (req,res) => {
+exports.updateDisplayPicture = async (req, res) => {
   try {
-    
-  } catch (err) {
-    
-  }
-}
 
-exports.getEnrolledCourses = async (req,res) => {
-  try {
+    if (!req.files || !req.files.displayPicture) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload an image",
+      });
+    }
+
     
+    const displayPicture = req.files.displayPicture;
+
+    const image = await uploadImageToCloudinary(
+      displayPicture,
+      process.env.FOLDER_NAME,
+      1000,
+      1000
+    );
+
+    const updatedProfile = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        image: image.secure_url,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Display picture updated successfully",
+      data: updatedProfile,
+    });
   } catch (err) {
-    
+    console.log(err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error while updating display picture",
+    });
   }
-}
+};
+
+exports.getEnrolledCourses = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const userDetails = await User.findById(userId)
+      .populate({
+        path: "courses",
+        populate: {
+          path: "courseContent",
+        },
+      })
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      data: userDetails.courses,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not fetch enrolled courses",
+    });
+  }
+};

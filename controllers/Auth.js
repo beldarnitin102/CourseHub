@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mailSender = require("../utils/mailSender");
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
+const Profile = require("../models/Profile");
 
 exports.sendOTP = async (req, res) => {
   try {
@@ -26,22 +27,24 @@ exports.sendOTP = async (req, res) => {
       specialChars: false,
     });
 
-    const result = await OTP.findOne({ otp: otp });
-    
+    let result = await OTP.findOne({ otp });
+
     //unique otp but these is not good practice
     while (result) {
-      otp = otpGenerator(6, {
+      otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
         specialChars: false,
       });
-      result = await OTP.findOne({ otp: otp });
+      result = await OTP.findOne({otp });
     }
 
     const otpPayload = { email, otp };
-    
+
     //db entry saved for otp
     const otpBody = await OTP.create(otpPayload);
+
+    
 
     return res.status(200).json({
       success: true,
@@ -71,15 +74,14 @@ exports.signUp = async (req, res) => {
       otp,
     } = req.body;
 
-
     //check validation
-    if (!firstName || !email || password || confirmPassword || otp) {
+    if (!firstName || !email || !password || !confirmPassword || !otp) {
       return res.status(403).json({
         success: false,
         message: "All fields are required",
       });
     }
- 
+
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
@@ -96,14 +98,14 @@ exports.signUp = async (req, res) => {
       });
     }
 
-    const recentOtp = (await OTP.find({ email }))
-      .sort({ createdAt: -1 })
-      .limit(1);
+    const recentOtp = await OTP.findOne({ email }).sort({ createdAt: -1 });
 
-    if (recentOtp.length == 0) {
+    
+
+    if (!recentOtp) {
       return res.status(400).json({
         success: false,
-        message: "Otp are not found",
+        message: "OTP not found",
       });
     } else if (otp !== recentOtp.otp) {
       return res.status(403).json({
@@ -114,7 +116,7 @@ exports.signUp = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    const ProfileDetails = await Profiler.create({
+    const ProfileDetails = await Profile.create({
       gender: null,
       dataOfBirth: null,
       about: null,
@@ -157,7 +159,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    
     const user = await User.findOne({ email }).populate("additionalDetails");
 
     if (!user) {
@@ -211,18 +212,10 @@ exports.changePassword = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const {
-      oldPassword,
-      newPassword,
-      confirmPassword,
-    } = req.body;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
 
     // Validation
-    if (
-      !oldPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
+    if (!oldPassword || !newPassword || !confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -247,10 +240,7 @@ exports.changePassword = async (req, res) => {
     }
 
     // Verify old password
-    const isPasswordMatch = await bcrypt.compare(
-      oldPassword,
-      user.password
-    );
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
 
     if (!isPasswordMatch) {
       return res.status(401).json({
@@ -260,10 +250,7 @@ exports.changePassword = async (req, res) => {
     }
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update Password
     await User.findByIdAndUpdate(
@@ -271,24 +258,20 @@ exports.changePassword = async (req, res) => {
       {
         password: hashedPassword,
       },
-      { new: true }
+      { new: true },
     );
 
     // Send email
     await mailSender(
       user.email,
       "Password Updated Successfully",
-      passwordUpdated(
-        user.email,
-        `${user.firstName} ${user.lastName}`
-      )
+      passwordUpdated(user.email, `${user.firstName} ${user.lastName}`),
     );
 
     return res.status(200).json({
       success: true,
       message: "Password updated successfully",
     });
-
   } catch (err) {
     console.log(err);
 

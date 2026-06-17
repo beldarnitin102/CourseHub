@@ -11,9 +11,17 @@ exports.uploadImageToCloudinary = async(file,folder, height, quality) => {
     options.quality = quality
   }
 
-  options.resource.type = "auto"
+  options.resource_type = "auto"
 
-  return await cloudinary.uploader.upload(file.tempFilePath, options)
+  try {
+  return await cloudinary.uploader.upload(
+    file.tempFilePath,
+    options
+  );
+} catch (error) {
+  console.log("Cloudinary Upload Error:", error);
+  throw error;
+}
 
   
 

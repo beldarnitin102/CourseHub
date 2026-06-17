@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     ref: "Course"
 
   }],
-  images : {
+  image : {
     type: String,
     required:true
   },
