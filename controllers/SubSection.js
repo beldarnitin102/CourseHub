@@ -34,8 +34,7 @@ exports.createSubSection = async (req, res) => {
       videoUrl: uploadDetails.secure_url,
     });
 
-    const updateSection = await Section.findByIdAndUpdate(
-      { id: sectionId },
+    const updateSection = await Section.findByIdAndUpdate(sectionId,
       {
         $push: {
           subSection: SubsectionDetails._id,

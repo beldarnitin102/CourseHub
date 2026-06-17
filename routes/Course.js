@@ -11,15 +11,15 @@ const {createSubSection, updateSubSection, deleteSubSection} = require("../contr
 
 const {createRating, getAverageRating, getAllRating, getAllRatingAndReview} = require("../controllers/RatingAndReview")
 
-const {auth, isInstructor, isStudent} = require("../middleware/auth")
+const {auth, isInstructor, isStudent, isAdmin} = require("../middleware/auth")
 
-router.post("../createCourse", auth,isInstructor,createCourse)
-router.post("../addSection", auth,isInstructor,createSection)
-router.post("../updateSection", auth,isInstructor,updateSection)
-router.post("../deleteSection", auth,isInstructor,deleteSection)
+router.post("/createCourse", auth,isInstructor,createCourse)
+router.post("/addSection", auth,isInstructor,createSection)
+router.post("/updateSection", auth,isInstructor,updateSection)
+router.post("/deleteSection", auth,isInstructor,deleteSection)
 
 router.get("/getAllCourses", showAllCourses)
-router.get("/getCourseDetails", getCourseDetails)
+router.post("/getCourseDetails", getCourseDetails)
 
 router.post("/createSubSection", createSubSection)
 router.post("/updateSubSection", updateSubSection)
@@ -28,7 +28,7 @@ router.post("/deleteSubSection", deleteSubSection)
 
 router.get("/showAllCatogories", showAllCatgorey)
 router.post("/getCategoryPageDetails", categoriesPageDetails)
-router.post("/createCatgorey", createCatgorey)
+router.post("/createCatgorey", auth, isAdmin,createCatgorey)
 
 router.post("/createRating", auth,isStudent,createRating)
 router.get("/getAverageRating", getAverageRating)

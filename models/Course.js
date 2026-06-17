@@ -4,7 +4,7 @@ const CourseSchema = new mongoose.Schema({
   courseName: {
     type: String,
   },
-  courseDescription: {
+  courseDescirption: {
     type: String,
   },
   instructor: [

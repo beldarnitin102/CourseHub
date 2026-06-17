@@ -11,14 +11,15 @@ exports.createCatgorey = async (req, res) => {
       });
     }
 
-    const tagsDetails = await Category.create({
+    const CategoreyDetails = await Category.create({
       name: name,
       description: description,
     });
 
     return res.status(200).json({
       success: true,
-      message: "tags created succesfully",
+      message: "Categorey created succesfully",
+      data : CategoreyDetails
     });
   } catch (err) {
     console.log(err);
@@ -31,11 +32,12 @@ exports.createCatgorey = async (req, res) => {
 
 exports.showAllCatgorey = async (req, res) => {
   try {
-    const allTags = await Category.find({}, { name: true, description: true });
+    const allCategorey = await Category.find({}, { name: true, description: true });
 
     return res.status(200).json({
       success: true,
-      message: "All tags return succesfully",
+      message: "All Categorey return succesfully",
+      data : allCategorey
     });
   } catch (err) {
     console.log(err);

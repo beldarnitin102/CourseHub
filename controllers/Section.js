@@ -11,7 +11,9 @@ exports.createSection = async (req, res) => {
 
     const { sectionName, courseId } = req.body;
 
-    if (!sectionName || courseId) {
+    
+
+    if (!sectionName || !courseId) {
       return res.status(400).json({
         success: false,
         message: "Missing properties",
