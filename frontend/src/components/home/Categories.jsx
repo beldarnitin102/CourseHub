@@ -1,4 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Categories() {
+  // 1. Hooks must be declared here, inside the component but BEFORE the return statement
+  const navigate = useNavigate();
+  
   const categories = [
     {
       title: "Web Development",
@@ -65,7 +70,16 @@ export default function Categories() {
                 {category.courses}
               </p>
 
-              <button className="mt-6 font-semibold text-[#2563EB]">
+              <button
+                onClick={() =>
+                  navigate(
+                    `/courses?category=${encodeURIComponent(
+                      category.title
+                    )}`
+                  )
+                }
+                className="mt-6 font-semibold text-[#2563EB] cursor-pointer"
+              >
                 Explore →
               </button>
             </div>

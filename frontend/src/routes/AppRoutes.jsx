@@ -29,6 +29,9 @@ import CourseBuilder from "../pages/dashboard/instructor/CourseBuilder";
 import PrivateRoute from "../components/auth/PrivateRoute";
 import StudentRoute from "../components/auth/StudentRoute";
 import InstructorRoute from "../components/auth/InstructorRoute";
+import Courses from "../pages/course/Courses";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
 
 export default function AppRoutes() {
   return (
@@ -165,6 +168,10 @@ export default function AppRoutes() {
         element={<Navigate to="/" replace />}
       />
 
+
+    <Route path="/courses" element={<Courses />} />
+<Route path="/about" element={<About />} />
+<Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }

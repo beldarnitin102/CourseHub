@@ -1,125 +1,133 @@
+import { useNavigate } from "react-router-dom";
+import heroStudent from "../../assets/hero/hero-student.png";
+import CountUpComponent from "react-countup";
+
+// Fallback safety to check if it's nested inside an object default property
+const CountUp = CountUpComponent.default || CountUpComponent;
+
 export default function HeroSection() {
+  const navigate = useNavigate();
+
   return (
-    <section className="bg-[#F3F4F6]">
-      <div className="mx-auto max-w-7xl px-6 py-24">
-
+    <section className="bg-[#F9FAFB]">
+      {/* Changed py-20 to pt-20 pb-6 to push content tightly to the bottom feature bar */}
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-6">
         <div className="grid items-center gap-16 lg:grid-cols-2">
-
-          {/* Left Content */}
+          
+          {/* Left Side */}
           <div>
-
-            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-[#2563EB]">
-              🚀 Learn Without Limits
-            </span>
-
-            <h1 className="mt-6 text-5xl font-bold leading-tight text-[#111827] lg:text-7xl">
-              Master Skills.
+            <h1 className="text-5xl font-bold leading-tight text-[#111827] lg:text-7xl">
+              Learn Skills.
               <br />
-              Build Projects.
-              <br />
-              Launch Your Career.
+              Build Your{" "}
+              <span className="text-[#2563EB]">
+                Future.
+              </span>
             </h1>
 
             <p className="mt-6 max-w-xl text-lg text-gray-600">
-              Learn from industry-ready courses designed to help
-              you gain real-world skills, build confidence, and
-              grow faster in your career.
+              Explore 1000+ high-quality courses from expert
+              instructors and advance your career with
+              industry-ready learning.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
-
-              <button className="rounded-xl bg-[#2563EB] px-7 py-4 font-semibold text-white transition hover:scale-105">
+            <div className="mt-10 flex flex-wrap gap-4">
+              <button
+                onClick={() => navigate("/courses")}
+                className="rounded-xl bg-[#2563EB] px-8 py-4 font-semibold text-white transition duration-300 hover:scale-105 cursor-pointer"
+              >
                 Explore Courses
               </button>
 
-              <button className="rounded-xl border border-gray-300 bg-white px-7 py-4 font-semibold text-[#111827] transition hover:bg-gray-50">
+              <button
+                onClick={() => navigate("/signup")}
+                className="rounded-xl border border-gray-300 bg-white px-8 py-4 font-semibold text-[#111827] transition hover:bg-gray-50 cursor-pointer"
+              >
                 Become Instructor
               </button>
-
             </div>
-
-            <div className="mt-12 flex gap-10">
-
-              <div>
-                <h3 className="text-3xl font-bold text-[#111827]">
-                  20K+
-                </h3>
-                <p className="text-gray-500">
-                  Students
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-3xl font-bold text-[#111827]">
-                  1000+
-                </h3>
-                <p className="text-gray-500">
-                  Courses
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-3xl font-bold text-[#111827]">
-                  500+
-                </h3>
-                <p className="text-gray-500">
-                  Instructors
-                </p>
-              </div>
-
-            </div>
-
           </div>
 
-          {/* Right Content */}
-          <div className="relative">
+          {/* Right Side */}
+          <div className="relative flex justify-center">
+            <img
+              src={heroStudent}
+              alt="Student Learning"
+              className="w-full max-w-lg"
+            />
 
-            <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-xl">
-
-              <div className="mb-6 flex items-center justify-between">
-                <h3 className="font-bold text-[#111827]">
-                  Learning Progress
-                </h3>
-
-                <span className="font-semibold text-green-600">
-                  75%
-                </span>
+            {/* Students Card */}
+            <div className="animate-float absolute right-0 top-8 rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl min-w-[140px]">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">👥</span>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Students</p>
               </div>
-
-              <div className="h-3 rounded-full bg-gray-200">
-                <div className="h-3 w-3/4 rounded-full bg-green-500"></div>
-              </div>
-
-              <div className="mt-8 space-y-4">
-
-                <div className="rounded-xl bg-gray-100 p-4">
-                  React Development
-                </div>
-
-                <div className="rounded-xl bg-gray-100 p-4">
-                  Node.js Backend
-                </div>
-
-                <div className="rounded-xl bg-gray-100 p-4">
-                  MongoDB Database
-                </div>
-
-              </div>
-
+              <h3 className="mt-1 text-2xl font-bold text-[#111827]">
+                {typeof CountUp === "function" ? (
+                  <CountUp end={20} duration={2} suffix="K+" />
+                ) : (
+                  "20K+"
+                )}
+              </h3>
             </div>
 
-            <div className="absolute -left-10 top-10 rounded-2xl bg-white p-4 shadow-lg">
-              👨‍🎓 20K+ Students
+            {/* Courses Card */}
+            <div className="animate-float-delay absolute right-4 top-40 rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl min-w-[140px]">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">📚</span>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Courses</p>
+              </div>
+              <h3 className="mt-1 text-2xl font-bold text-[#2563EB]">
+                {typeof CountUp === "function" ? (
+                  <CountUp end={1000} duration={2.5} suffix="+" />
+                ) : (
+                  "1000+"
+                )}
+              </h3>
             </div>
 
-            <div className="absolute -right-10 bottom-10 rounded-2xl bg-white p-4 shadow-lg">
-              📚 1000+ Courses
+            {/* Instructor Card */}
+            <div className="animate-float-slow absolute right-12 top-72 rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl min-w-[140px]">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">👨‍🏫</span>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Instructors</p>
+              </div>
+              <h3 className="mt-1 text-2xl font-bold text-[#111827]">
+                {typeof CountUp === "function" ? (
+                  <CountUp end={500} duration={3} suffix="+" />
+                ) : (
+                  "500+"
+                )}
+              </h3>
             </div>
-
           </div>
 
         </div>
+      </div>
 
+      {/* Feature Bar - Sits perfectly aligned with the hero components above */}
+      <div className="border-t border-gray-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 md:grid-cols-4">
+          <div className="flex flex-col gap-1">
+            <h4 className="font-bold text-[#111827] flex items-center gap-2">🌐 Learn Anything</h4>
+            <p className="text-sm text-gray-500">Courses across multiple domains.</p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <h4 className="font-bold text-[#111827] flex items-center gap-2">⭐ Expert Instructors</h4>
+            <p className="text-sm text-gray-500">Learn from industry professionals.</p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <h4 className="font-bold text-[#111827] flex items-center gap-2">♾️ Lifetime Access</h4>
+            <p className="text-sm text-gray-500">Learn at your own pace forever.</p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <h4 className="font-bold text-[#111827] flex items-center gap-2">📜 Certificate</h4>
+            <p className="text-sm text-gray-500">Showcase your achievements.</p>
+          </div>
+        </div>
       </div>
     </section>
   );
