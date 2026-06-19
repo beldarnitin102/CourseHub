@@ -1,4 +1,4 @@
-import DashboardLayout from "../../../components/dashboard/DashboardLayout";
+import DashboardLayout from "../DashboardLayout";
 import CourseInformationForm from "../../../components/course/CourseInformationForm";
 
 export default function CreateCourse() {
