@@ -1,25 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AppRoutes from "./routes/AppRoutes";
 import SplashScreen from "./components/common/SplashScreen";
-//import Home from "./pages/Home";
-//import Navbar from "./components/layout/Navbar";
-import Signup from "./pages/Signup";
-//import Login from "./pages/Login";
 
 function App() {
   const [loading, setLoading] = useState(true);
 
-  return (
-    <>
-      {loading ? (
-        <SplashScreen onFinish={() => setLoading(false)} />
-      ) : (
-        //<Home />
-       // <Navbar/>
-       <Signup/>
-       //<Login/>
-      )}
-    </>
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
+
+  return <AppRoutes />;
 }
 
 export default App;

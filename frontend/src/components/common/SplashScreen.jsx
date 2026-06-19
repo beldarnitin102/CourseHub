@@ -38,12 +38,7 @@ export default function SplashScreen({ onFinish }) {
       {/* Content */}
       <div className="relative z-10 text-center">
 
-        {/* Logo */}
-        {/* <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#2563EB] shadow-lg">
-          <span className="text-2xl font-bold text-white">
-            CH
-          </span>
-        </div> */}
+       
 
         {/* Brand Name */}
         <h1 className="mb-4 text-5xl font-extrabold text-[#111827]">
