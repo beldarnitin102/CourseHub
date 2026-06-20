@@ -28,12 +28,13 @@ setFormData((prev) => ({
 };
 
 const handleSendOTP = async () => {
+   
 if (!formData.email) {
 alert("Please enter email first");
 return;
 }
 
-```
+
 try {
   setLoading(true);
 
@@ -47,14 +48,14 @@ try {
 } finally {
   setLoading(false);
 }
-```
+
 
 };
 
 const handleSubmit = async (e) => {
 e.preventDefault();
 
-```
+
 if (formData.password !== formData.confirmPassword) {
   alert("Passwords do not match");
   return;
@@ -75,7 +76,7 @@ try {
 } finally {
   setLoading(false);
 }
-```
+
 
 };
 

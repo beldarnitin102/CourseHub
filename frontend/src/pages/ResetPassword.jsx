@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom"; // Added useNav
 import AuthLayout from "../components/auth/AuthLayout";
 import { resetPassword } from "../services/operations/authAPI"; // Imported API function
 
+
 export default function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate(); // Hook for redirection

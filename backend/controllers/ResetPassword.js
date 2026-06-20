@@ -2,6 +2,7 @@ const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 const bcrypt = require("bcrypt")
 const crypto = require("crypto");
+require("dotenv").config()
 
 exports.resetPasswordToken = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ exports.resetPasswordToken = async (req, res) => {
       },
     );
 
-    const url = `https://localhost:3000/update-password/${token}`;
+    const url = `${process.env.FRONTEND_URL}/update-password/${token}`;
 
     await mailSender(
       email,

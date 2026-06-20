@@ -11,7 +11,7 @@ const {auth} = require("../middleware/auth")
 router.post("/login", login)
 router.post("/signup", signUp)
 router.post("/changePassword", changePassword)
-router.post("/sendotp", sendOTP)
+router.post("/sendOTP", sendOTP)
 router.post("/reset-password-token", resetPasswordToken)
 router.post("/reset-password", resetPassword)
 
