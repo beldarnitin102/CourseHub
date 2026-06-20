@@ -5,6 +5,8 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { BrowserRouter } from "react-router-dom";
 
+import { Toaster } from "react-hot-toast";
+
 // ADDED: Import your global styles so Tailwind/CSS works again
 import "./index.css"; 
 
@@ -14,6 +16,7 @@ ReactDOM.createRoot(
   <Provider store={store}>
     <BrowserRouter>
       <App />
+      <Toaster position="top-center" />
     </BrowserRouter>
   </Provider>
 );

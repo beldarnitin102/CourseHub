@@ -22,6 +22,15 @@ export default function CourseDetails() {
 
     thumbnail:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
+
+    learn: [
+      "Build Full Stack MERN Applications",
+      "Create REST APIs",
+      "JWT Authentication",
+      "Cloudinary File Uploads",
+      "Razorpay Integration",
+      "Deploy Production Applications",
+    ],
   };
 
   const sections = [
@@ -33,15 +42,13 @@ export default function CourseDetails() {
         {
           _id: 11,
           title: "Welcome",
-          description:
-            "Course Overview",
+          description: "Course Overview",
         },
 
         {
           _id: 12,
           title: "Setup",
-          description:
-            "Install Tools",
+          description: "Install Tools",
         },
       ],
     },
@@ -54,15 +61,32 @@ export default function CourseDetails() {
         {
           _id: 21,
           title: "Components",
-          description:
-            "Understanding Components",
+          description: "Understanding Components",
         },
 
         {
           _id: 22,
           title: "Hooks",
-          description:
-            "React Hooks Deep Dive",
+          description: "React Hooks Deep Dive",
+        },
+      ],
+    },
+
+    {
+      _id: 3,
+      sectionName: "Backend Development",
+
+      subSections: [
+        {
+          _id: 31,
+          title: "Express Server",
+          description: "Creating APIs",
+        },
+
+        {
+          _id: 32,
+          title: "MongoDB",
+          description: "Database Integration",
         },
       ],
     },
@@ -70,35 +94,76 @@ export default function CourseDetails() {
 
   return (
     <MainLayout>
-
       <section className="bg-[#F3F4F6] py-16">
 
         <div className="mx-auto max-w-7xl px-6">
 
           <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
 
+            {/* LEFT */}
             <div>
 
               <CourseHero course={course} />
 
+              {/* What You'll Learn */}
               <div className="mt-12 rounded-3xl bg-white p-8 shadow-md">
 
-                <h2 className="mb-4 text-3xl font-bold">
+                <h2 className="mb-6 text-3xl font-bold text-[#111827]">
                   What You'll Learn
                 </h2>
 
-                <p className="text-gray-600">
-                  Build complete full stack applications,
-                  authentication systems, REST APIs,
-                  payment integrations and deployment.
-                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+
+                  {course.learn.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3"
+                    >
+                      <span className="text-green-600">
+                        ✓
+                      </span>
+
+                      <p className="text-gray-700">
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+
+                </div>
 
               </div>
 
+              {/* Requirements */}
+              <div className="mt-8 rounded-3xl bg-white p-8 shadow-md">
+
+                <h2 className="mb-5 text-3xl font-bold">
+                  Requirements
+                </h2>
+
+                <ul className="space-y-3 text-gray-600">
+
+                  <li>
+                    • Basic Computer Knowledge
+                  </li>
+
+                  <li>
+                    • Internet Connection
+                  </li>
+
+                  <li>
+                    • Passion To Learn
+                  </li>
+
+                </ul>
+
+              </div>
+
+              {/* Course Content */}
               <CourseContent sections={sections} />
 
             </div>
 
+            {/* RIGHT SIDEBAR */}
             <CourseSidebar
               thumbnail={course.thumbnail}
               price={course.price}
@@ -109,7 +174,6 @@ export default function CourseDetails() {
         </div>
 
       </section>
-
     </MainLayout>
   );
 }

@@ -1,6 +1,7 @@
 import MainLayout from "../../layouts/MainLayout";
 import { useSearchParams } from "react-router-dom";
 import coursesData from "../../data/coursesData"; // Utilizing your external data file
+import { useNavigate } from "react-router-dom";
 
 export default function Courses() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,9 +18,10 @@ export default function Courses() {
   ];
 
   // Filter courses based on selected category query parameter
-  const filteredCourses = selectedCategory && selectedCategory !== "All"
-    ? coursesData.filter((course) => course.category === selectedCategory)
-    : coursesData;
+  const filteredCourses =
+    selectedCategory && selectedCategory !== "All"
+      ? coursesData.filter((course) => course.category === selectedCategory)
+      : coursesData;
 
   // Handle smooth route search parameter updates without page refreshes
   const handleCategoryClick = (category) => {
@@ -30,11 +32,12 @@ export default function Courses() {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <MainLayout>
       <section className="bg-[#F3F4F6] min-h-screen py-20">
         <div className="mx-auto max-w-7xl px-6">
-          
           <h1 className="mb-10 text-5xl font-bold text-[#111827]">
             Explore Courses
           </h1>
@@ -43,7 +46,9 @@ export default function Courses() {
           <div className="mb-12 flex flex-wrap gap-3">
             {categories.map((category) => {
               // Highlight "All" button when no category parameter is present
-              const isActive = selectedCategory === category || (!selectedCategory && category === "All");
+              const isActive =
+                selectedCategory === category ||
+                (!selectedCategory && category === "All");
 
               return (
                 <button
@@ -64,14 +69,17 @@ export default function Courses() {
           {/* 2. Courses Grid Display Layout */}
           {filteredCourses.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-3xl shadow-sm">
-              <p className="text-xl text-gray-500">No courses found in this category yet.</p>
+              <p className="text-xl text-gray-500">
+                No courses found in this category yet.
+              </p>
             </div>
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {filteredCourses.map((course) => (
                 <div
                   key={course.id}
-                  className="rounded-3xl bg-white p-6 shadow-md hover:shadow-xl transition duration-300"
+                  onClick={() => navigate(`/course/${course.id}`)}
+                  className="cursor-pointer rounded-3xl bg-white p-6 shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
                 >
                   {/* Course Banner Placeholder */}
                   <div className="mb-5 h-48 rounded-2xl bg-gray-200 overflow-hidden flex items-center justify-center">
@@ -87,7 +95,9 @@ export default function Courses() {
                   </p>
 
                   <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
-                    <span className="text-sm text-gray-500">👥 {course.students || "0"} Students</span>
+                    <span className="text-sm text-gray-500">
+                      👥 {course.students || "0"} Students
+                    </span>
                     <span className="text-xl font-bold text-[#2563EB]">
                       {course.price}
                     </span>
@@ -96,7 +106,6 @@ export default function Courses() {
               ))}
             </div>
           )}
-
         </div>
       </section>
     </MainLayout>

@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useDispatch } from "react-redux"; // Added useDispatch
 import AuthLayout from "../components/auth/AuthLayout";
+import { login } from "../services/operations/authAPI"; // Imported login operation
 
 export default function Login() {
+  const dispatch = useDispatch(); // Initialize dispatch
+  const navigate = useNavigate(); // Initialize navigate
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Added loading state for UX
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -19,10 +25,27 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const { email, password } = formData;
+    
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    console.log(formData);
+    try {
+      setLoading(true);
+      console.log("Logging in with:", email);
 
-    // LOGIN API CALL HERE
+      // IMPLEMENTED: login API Call
+      await login(email, password, dispatch, navigate);
+
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert(error.message || "Failed to log in. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,7 +88,9 @@ export default function Login() {
               placeholder="john@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none transition focus:border-[#2563EB]"
+              required
+              disabled={loading}
+              className="w-full rounded-xl border border-gray-300 px-4 py-4 outline-none transition focus:border-[#2563EB] disabled:bg-gray-100"
             />
           </div>
 
@@ -91,7 +116,9 @@ export default function Login() {
                 placeholder="Enter password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 px-4 py-4 pr-14 outline-none transition focus:border-[#2563EB]"
+                required
+                disabled={loading}
+                className="w-full rounded-xl border border-gray-300 px-4 py-4 pr-14 outline-none transition focus:border-[#2563EB] disabled:bg-gray-100"
               />
 
               <button
@@ -109,7 +136,7 @@ export default function Login() {
           {/* Remember Me */}
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input type="checkbox" />
+              <input type="checkbox" disabled={loading} />
               Remember me
             </label>
           </div>
@@ -117,9 +144,10 @@ export default function Login() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full rounded-xl bg-[#2563EB] py-4 text-lg font-semibold text-white transition hover:bg-blue-700"
+            disabled={loading}
+            className="w-full rounded-xl bg-[#2563EB] py-4 text-lg font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           {/* Divider */}
