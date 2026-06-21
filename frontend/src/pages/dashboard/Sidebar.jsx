@@ -38,6 +38,27 @@ export default function Sidebar() {
       path: "/cart",
       icon: "🛒",
     },
+
+    {
+  name: "Instructor Dashboard",
+  path: "/dashboard/instructor",
+  icon: "🎓",
+},
+{
+  name: "Create Course",
+  path: "/dashboard/create-course",
+  icon: "➕",
+},
+{
+  name: "Course Builder",
+  path: "/dashboard/course-builder",
+  icon: "🛠️",
+},
+{
+  name: "My Courses",
+  path: "/dashboard/instructor-courses",
+  icon: "📚",
+}
   ];
 
   const handleLogout = () => {

@@ -11,8 +11,6 @@ exports.createSection = async (req, res) => {
 
     const { sectionName, courseId } = req.body;
 
-    
-
     if (!sectionName || !courseId) {
       return res.status(400).json({
         success: false,
@@ -31,7 +29,12 @@ exports.createSection = async (req, res) => {
       },
       { new: true },
     )
-      .populate("")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      })
       .exec();
 
     return res.status(200).json({
@@ -55,7 +58,7 @@ exports.updateSection = async (req, res) => {
     const { sectionName, SectionId } = req.body;
     // data validation
 
-    if (!sectionName || SectionId) {
+    if (!sectionName || !SectionId) {
       return res.status(400).json({
         success: false,
         message: "Missing properties",
@@ -87,7 +90,7 @@ exports.deleteSection = async (req, res) => {
   try {
     const { SectionId } = req.params;
 
-    await section.findByIdAndDelete(SectionId);
+    await Section.findByIdAndDelete(SectionId);
     //we need to delete the entry from course schema
 
     return res.status(200).json({

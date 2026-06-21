@@ -1,7 +1,10 @@
 import { useState } from "react";
 
 export default function AddLecture() {
-  const [lectureTitle, setLectureTitle] =
+  const [title, setTitle] =
+    useState("");
+
+  const [videoUrl, setVideoUrl] =
     useState("");
 
   return (
@@ -10,20 +13,25 @@ export default function AddLecture() {
       <input
         type="text"
         placeholder="Lecture Title"
-        value={lectureTitle}
+        value={title}
         onChange={(e) =>
-          setLectureTitle(e.target.value)
+          setTitle(e.target.value)
         }
         className="w-full rounded-xl border p-4"
       />
 
       <input
-        type="file"
+        type="text"
+        placeholder="YouTube URL"
+        value={videoUrl}
+        onChange={(e) =>
+          setVideoUrl(e.target.value)
+        }
         className="mt-4 w-full rounded-xl border p-4"
       />
 
       <button className="mt-4 rounded-xl bg-[#2563EB] px-6 py-3 text-white">
-        Upload Lecture
+        Add Lecture
       </button>
 
     </div>

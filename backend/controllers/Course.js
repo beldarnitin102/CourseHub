@@ -6,8 +6,14 @@ const { uploadImageToCloudinary } = require("../utils/imageUploder");
 exports.createCourse = async (req, res) => {
   try {
     //fetch data
-    const { courseName, courseDescirption, whatYouWillLearn, price, tags, category} =
-      req.body;
+    const {
+      courseName,
+      courseDescription,
+      whatYouWillLearn,
+      price,
+      tags,
+      category,
+    } = req.body;
 
     const thumbnail = req.files.thumbnailImage;
 
@@ -15,13 +21,20 @@ exports.createCourse = async (req, res) => {
 
     if (
       !courseName ||
-      !courseDescirption ||
+      !courseDescription ||
       !whatYouWillLearn ||
       !price ||
       !tags ||
       !thumbnail
     ) {
-      console.log(courseName,courseDescirption,whatYouWillLearn,price,tags,thumbnail)
+      console.log(
+        courseName,
+        courseDescription,
+        whatYouWillLearn,
+        price,
+        tags,
+        thumbnail,
+      );
       return res.status(400).json({
         success: false,
         message: " All fileds are required",
@@ -35,7 +48,6 @@ exports.createCourse = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: " Instructor details are not found",
-        
       });
     }
 
@@ -44,7 +56,7 @@ exports.createCourse = async (req, res) => {
     const CategoreyDetails = await Category.findById(category);
 
     if (!CategoreyDetails) {
-      console.log(err.message)
+      console.log(err.message);
       return res.status(400).json({
         success: false,
         message: " category details are not found",
@@ -62,18 +74,19 @@ exports.createCourse = async (req, res) => {
 
     const newCourse = await Course.create({
       courseName,
-      courseDescirption,
+      courseDescription,
       instructor: instructorDetails._id,
       whatYouWillLearn,
       price,
       category: CategoreyDetails._id,
       tags,
-      thumbnail: thumbnailuploder.secure_url
+      thumbnail: thumbnailuploder.secure_url,
     });
 
     //add course into the user schema of instructor
 
-    await User.findByIdAndUpdate(instructorDetails._id,
+    await User.findByIdAndUpdate(
+      instructorDetails._id,
       {
         $push: {
           courses: newCourse._id,
@@ -88,7 +101,7 @@ exports.createCourse = async (req, res) => {
       success: true,
       message: " Course created succesfully",
       data: newCourse,
-       courseId: newCourse._id,
+      courseId: newCourse._id,
     });
   } catch (err) {
     console.log(err.message);
@@ -113,7 +126,7 @@ exports.showAllCourses = async (req, res) => {
         studentsEnrolled: true,
       },
     )
-      .populate("Instructor")
+      .populate("instructor")
       .exec();
 
     return res.status(200).json({
@@ -151,24 +164,43 @@ exports.getCourseDetails = async (req, res) => {
       })
       .exec();
 
-    if(!getcourseDetails) {
+    if (!getcourseDetails) {
       return res.status(500).json({
-      success: false,
-      message: `could nor find the course with ${courseId}`,
-    });
+        success: false,
+        message: `could nor find the course with ${courseId}`,
+      });
     }
-
 
     return res.status(200).json({
       success: true,
       message: "course detail fetch succesfully ",
-      data : getcourseDetails
+      data: getcourseDetails,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+};
+
+exports.getInstructorCourses = async (req, res) => {
+  try {
+    const instructorId = req.user.id;
+
+    const courses = await Course.find({
+      instructor: instructorId,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: courses,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch courses",
     });
   }
 };

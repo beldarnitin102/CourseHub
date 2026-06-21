@@ -53,7 +53,7 @@ exports.categoriesPageDetails = async (req, res) => {
     const { categoryId } = req.body;
 
     const selectCatogory = await Category.findById(categoryId)
-      .populate("Courses")
+      .populate("courses")
       .exec();
 
     if (!selectCatogory) {
@@ -66,7 +66,7 @@ exports.categoriesPageDetails = async (req, res) => {
     const diffCategries = await Category.find({
       _id: { $ne: categoryId },
     })
-      .populate("Courses")
+      .populate("courses")
       .exec();
 
     //get top selling courses hw

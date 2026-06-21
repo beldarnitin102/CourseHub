@@ -13,3 +13,11 @@ export const authEndpoints = {
 
   RESET_PASSWORD: `${BASE_URL}/auth/reset-password`,
 };
+
+export const courseEndpoints = {
+  CREATE_COURSE: `${BASE_URL}/course/createCourse`,
+  ADD_SECTION: `${BASE_URL}/course/addSection`,
+  CREATE_SUBSECTION: `${BASE_URL}/course/createSubSection`,
+  GET_COURSE_DETAILS: `${BASE_URL}/course/getCourseDetails`,
+  GET_ALL_COURSES: `${BASE_URL}/course/getAllCourses`,
+};

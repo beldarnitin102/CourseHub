@@ -33,6 +33,7 @@ import Courses from "../pages/course/Courses";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import MyProfile from "../pages/MyProfile";
+import InstructorCourses from "../pages/dashboard/instructor/InstructorCourses";
 
 export default function AppRoutes() {
   return (
@@ -61,9 +62,23 @@ export default function AppRoutes() {
         }
       />
 
-      <Route path="/dashboard/profile" element={<MyProfile />} />
+      <Route
+        path="/dashboard/profile"
+        element={
+          <PrivateRoute>
+            <MyProfile />
+          </PrivateRoute>
+        }
+      />
 
-      <Route path="/dashboard/settings" element={<Settings />} />
+      <Route
+        path="/dashboard/settings"
+        element={
+          <PrivateRoute>
+            <Settings />
+          </PrivateRoute>
+        }
+      />
 
       {/* ================= STUDENT PROTECTED ================= */}
 
@@ -145,6 +160,17 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+  path="/dashboard/instructor-courses"
+  element={
+    <PrivateRoute>
+      <InstructorRoute>
+        <InstructorCourses />
+      </InstructorRoute>
+    </PrivateRoute>
+  }
+/>
 
       {/* ================= COMMON PROTECTED ================= */}
 

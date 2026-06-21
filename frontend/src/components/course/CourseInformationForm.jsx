@@ -1,12 +1,26 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { createCourse } from "../../services/operations/courseAPI";
+import { useDispatch } from "react-redux";
+import { setCourse } from "../../redux/slices/courseSlice";
 
 export default function CourseInformationForm() {
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const { token } = useSelector((state) => state.auth);
+
+  const [thumbnailImage, setThumbnailImage] = useState(null);
+
   const [formData, setFormData] = useState({
     courseName: "",
-    courseDescription: "",
+    courseDescirption: "",
     price: "",
     category: "",
     whatYouWillLearn: "",
+    tags: "",
   });
 
   const handleChange = (e) => {
@@ -16,95 +30,106 @@ export default function CourseInformationForm() {
     }));
   };
 
+  const handleSubmit = async () => {
+    const data = new FormData();
+
+    data.append("courseName", formData.courseName);
+
+    data.append("courseDescirption", formData.courseDescirption);
+
+    data.append("price", formData.price);
+
+    data.append("category", formData.category);
+
+    data.append("whatYouWillLearn", formData.whatYouWillLearn);
+
+    data.append("tags", formData.tags);
+
+    data.append("thumbnailImage", thumbnailImage);
+
+    const result = await createCourse(data, token);
+
+    if (result?.success) {
+      localStorage.setItem("courseId", result.courseId);
+
+        dispatch(
+    setCourse(result.data)
+  );
+
+      navigate("/dashboard/course-builder");
+    }
+  };
+
   return (
     <div className="rounded-3xl bg-white p-8 shadow-md">
-
       <div className="grid gap-6">
+        <input
+          type="text"
+          name="courseName"
+          placeholder="Course Name"
+          value={formData.courseName}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-        <div>
-          <label className="mb-2 block font-medium">
-            Course Name
-          </label>
+        <textarea
+          rows="4"
+          name="courseDescirption"
+          placeholder="Course Description"
+          value={formData.courseDescirption}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-          <input
-            type="text"
-            name="courseName"
-            value={formData.courseName}
-            onChange={handleChange}
-            className="w-full rounded-xl border p-4"
-          />
-        </div>
+        <input
+          type="number"
+          name="price"
+          placeholder="Price"
+          value={formData.price}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-        <div>
-          <label className="mb-2 block font-medium">
-            Course Description
-          </label>
+        <input
+          type="text"
+          name="category"
+          placeholder="Category Id"
+          value={formData.category}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-          <textarea
-            rows="5"
-            name="courseDescription"
-            value={formData.courseDescription}
-            onChange={handleChange}
-            className="w-full rounded-xl border p-4"
-          />
-        </div>
+        <textarea
+          rows="4"
+          name="whatYouWillLearn"
+          placeholder="What Students Will Learn"
+          value={formData.whatYouWillLearn}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <input
+          type="text"
+          name="tags"
+          placeholder="mern,javascript,node"
+          value={formData.tags}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        />
 
-          <div>
-            <label className="mb-2 block font-medium">
-              Price
-            </label>
+        <input
+          type="file"
+          onChange={(e) => setThumbnailImage(e.target.files[0])}
+          className="w-full rounded-xl border p-4"
+        />
 
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-full rounded-xl border p-4"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block font-medium">
-              Category
-            </label>
-
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full rounded-xl border p-4"
-            >
-              <option>Select Category</option>
-              <option>Web Development</option>
-              <option>AI & ML</option>
-              <option>Data Science</option>
-            </select>
-          </div>
-
-        </div>
-
-        <div>
-          <label className="mb-2 block font-medium">
-            What Students Will Learn
-          </label>
-
-          <textarea
-            rows="4"
-            name="whatYouWillLearn"
-            value={formData.whatYouWillLearn}
-            onChange={handleChange}
-            className="w-full rounded-xl border p-4"
-          />
-        </div>
-
-        <button className="rounded-xl bg-[#2563EB] py-4 font-semibold text-white">
+        <button
+          onClick={handleSubmit}
+          className="rounded-xl bg-[#2563EB] py-4 font-semibold text-white"
+        >
           Save & Continue
         </button>
-
       </div>
-
     </div>
   );
 }

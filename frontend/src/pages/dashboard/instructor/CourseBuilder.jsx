@@ -1,6 +1,13 @@
 import DashboardLayout from "../DashboardLayout";
+import AddSection from "../../../components/course/AddSection";
+import { useSelector } from "react-redux";
 
 export default function CourseBuilder() {
+
+  const { course } = useSelector(
+    (state) => state.course
+  );
+
   return (
     <DashboardLayout>
 
@@ -10,9 +17,9 @@ export default function CourseBuilder() {
 
       <div className="rounded-3xl bg-white p-8 shadow-md">
 
-        <button className="rounded-xl bg-[#2563EB] px-6 py-3 text-white">
-          + Add Section
-        </button>
+        <AddSection
+          courseId={course?._id}
+        />
 
       </div>
 
