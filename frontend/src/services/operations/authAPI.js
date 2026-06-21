@@ -115,7 +115,16 @@ export const login = async (
 
     toast.success("Login Successful");
 
-    navigate("/");
+if (response.data.user.accountType === "Student") {
+  navigate("/dashboard");
+}
+else if (response.data.user.accountType === "Instructor") {
+  navigate("/dashboard/instructor");
+}
+else {
+  navigate("/");
+}
+
   } catch (error) {
     toast.error(
       error?.response?.data?.message ||

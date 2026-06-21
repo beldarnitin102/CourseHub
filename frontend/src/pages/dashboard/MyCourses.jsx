@@ -1,6 +1,43 @@
-import DashboardLayout from "../dashboard/DashboardLayout";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+import DashboardLayout from "../../pages/dashboard/DashboardLayout";
+
+import { getEnrolledCourses } from "../../services/operations/profileAPI";
 
 export default function MyCourses() {
+  const { token } = useSelector(
+    (state) => state.auth
+  );
+
+  const [courses, setCourses] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const result =
+        await getEnrolledCourses(token);
+
+      setCourses(result);
+      setLoading(false);
+    };
+
+    fetchCourses();
+  }, [token]);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <h1 className="text-3xl font-bold">
+          Loading...
+        </h1>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
 
@@ -8,38 +45,51 @@ export default function MyCourses() {
         My Courses
       </h1>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      {courses.length === 0 ? (
+        <div className="rounded-3xl bg-white p-10 shadow-md">
+          <h2 className="text-2xl font-semibold">
+            No Courses Purchased Yet
+          </h2>
 
-        {[1, 2, 3].map((course) => (
-          <div
-            key={course}
-            className="rounded-3xl bg-white p-6 shadow-md"
-          >
+          <p className="mt-2 text-gray-500">
+            Start learning by enrolling
+            in a course.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-2">
 
-            <div className="mb-4 h-48 rounded-2xl bg-gray-200"></div>
+          {courses.map((course) => (
+            <div
+              key={course._id}
+              className="rounded-3xl bg-white p-6 shadow-md"
+            >
 
-            <h3 className="text-xl font-bold">
-              MERN Stack Development
-            </h3>
+              <img
+                src={course.thumbnail}
+                alt={course.courseName}
+                className="mb-4 h-48 w-full rounded-2xl object-cover"
+              />
 
-            <p className="mt-2 text-gray-500">
-              Progress 72%
-            </p>
+              <h3 className="text-xl font-bold">
+                {course.courseName}
+              </h3>
 
-            <div className="mt-4 h-3 rounded-full bg-gray-200">
+              <p className="mt-2 text-gray-500">
+                {course.courseDescription}
+              </p>
 
-              <div className="h-3 w-[72%] rounded-full bg-[#2563EB]"></div>
+              <button
+                className="mt-5 rounded-xl bg-[#2563EB] px-5 py-3 text-white"
+              >
+                Continue Learning
+              </button>
 
             </div>
+          ))}
 
-            <button className="mt-5 rounded-xl bg-[#2563EB] px-5 py-3 text-white">
-              Continue Learning
-            </button>
-
-          </div>
-        ))}
-
-      </div>
+        </div>
+      )}
 
     </DashboardLayout>
   );

@@ -32,11 +32,11 @@ import InstructorRoute from "../components/auth/InstructorRoute";
 import Courses from "../pages/course/Courses";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import MyProfile from "../pages/MyProfile";
 
 export default function AppRoutes() {
   return (
     <Routes>
-
       {/* ================= PUBLIC ROUTES ================= */}
 
       <Route path="/" element={<Home />} />
@@ -45,20 +45,25 @@ export default function AppRoutes() {
 
       <Route path="/signup" element={<Signup />} />
 
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route path="/update-password/:token" element={<ResetPassword />} />
+
+      <Route path="/course/:courseId" element={<CourseDetails />} />
       <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <StudentRoute>
+              <StudentDashboard />
+            </StudentRoute>
+          </PrivateRoute>
+        }
       />
 
-      <Route
-        path="/update-password/:token"
-        element={<ResetPassword />}
-      />
+      <Route path="/dashboard/profile" element={<MyProfile />} />
 
-      <Route
-        path="/course/:courseId"
-        element={<CourseDetails />}
-      />
+      <Route path="/dashboard/settings" element={<Settings />} />
 
       {/* ================= STUDENT PROTECTED ================= */}
 
@@ -163,15 +168,11 @@ export default function AppRoutes() {
 
       {/* ================= FALLBACK ================= */}
 
-      <Route
-        path="*"
-        element={<Navigate to="/" replace />}
-      />
+      <Route path="*" element={<Navigate to="/" replace />} />
 
-
-    <Route path="/courses" element={<Courses />} />
-<Route path="/about" element={<About />} />
-<Route path="/contact" element={<Contact />} />
+      <Route path="/courses" element={<Courses />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }
