@@ -6,6 +6,7 @@ const {
   showAllCourses,
   getCourseDetails,
   getInstructorCourses,
+  getInstructorDashboard,
 } = require("../controllers/Course");
 
 const {
@@ -40,7 +41,7 @@ const {
   isAdmin,
 } = require("../middleware/auth");
 
-const { getInstructorDashboard } = require("../controllers/Instructor");
+
 
 router.post("/createCourse", auth, isInstructor, createCourse);
 router.post("/addSection", auth, isInstructor, createSection);

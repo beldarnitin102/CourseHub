@@ -3,59 +3,104 @@ const Section = require("../models/Section");
 const { uploadImageToCloudinary } = require("../utils/imageUploder");
 
 exports.createSubSection = async (req, res) => {
-  try {
-    // data fetch
-    // extract file/Video
-    // validation
-    // uplod video to cloudinary
-    // create subsection
-    // update section with the subsection
+try {
+const {
+sectionId,
+title,
+timeduration,
+description,
+videoUrl,
+} = req.body;
 
-    const { sectionId, title, timeduration, description } = req.body;
+let finalVideoUrl = "";
 
-    const video = req.files.videoFile;
+// Validation
+if (
+  !sectionId ||
+  !title ||
+  !timeduration ||
+  !description
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Missing required fields",
+  });
+}
 
-    if (!sectionId || !title || !timeduration || !description || !video) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
+// Option 1: YouTube URL
+if (videoUrl) {
+  finalVideoUrl = videoUrl;
+}
 
-    const uploadDetails = await uploadImageToCloudinary(
+// Option 2: Uploaded video
+else if (
+  req.files &&
+  req.files.videoFile
+) {
+  const video =
+    req.files.videoFile;
+
+  const uploadDetails =
+    await uploadImageToCloudinary(
       video,
-      process.env.FOLDER_NAME,
+      process.env.FOLDER_NAME
     );
 
-    const SubsectionDetails = await SubSection.create({
-      title: title,
-      timeDuration: timeduration,
-      description: description,
-      videoUrl: uploadDetails.secure_url,
-    });
+  finalVideoUrl =
+    uploadDetails.secure_url;
+}
 
-    const updateSection = await Section.findByIdAndUpdate(sectionId,
-      {
-        $push: {
-          subSection: SubsectionDetails._id,
-        },
+else {
+  return res.status(400).json({
+    success: false,
+    message:
+      "Provide either videoUrl or videoFile",
+  });
+}
+
+const subSection =
+  await SubSection.create({
+    title,
+    description,
+    timeDuration:
+      timeduration,
+    videoUrl: finalVideoUrl,
+  });
+
+const updatedSection =
+  await Section.findByIdAndUpdate(
+    sectionId,
+    {
+      $push: {
+        subSection:
+          subSection._id,
       },
-      { new: true },
-    );
+    },
+    { new: true }
+  ).populate("subSection");
 
-    return res.status(200).json({
-      success: true,
-      message: "Subsection created succesfully",
-      updateSection,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      message: "getting error in the Subsection creation ",
-    });
-  }
+return res.status(200).json({
+  success: true,
+  message:
+    "Lecture created successfully",
+  data: updatedSection,
+});
+
+
+} catch (err) {
+console.log(err);
+
+
+return res.status(500).json({
+  success: false,
+  message:
+    "Error creating subsection",
+});
+
+
+}
 };
+
 
 
 exports.updateSubSection = async (req,res) => {

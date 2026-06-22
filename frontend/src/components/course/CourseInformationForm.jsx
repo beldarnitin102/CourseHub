@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect , useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createCourse } from "../../services/operations/courseAPI";
+import { createCourse,  getCategories } from "../../services/operations/courseAPI";
 import { useDispatch } from "react-redux";
 import { setCourse } from "../../redux/slices/courseSlice";
 
@@ -13,6 +13,9 @@ export default function CourseInformationForm() {
   const { token } = useSelector((state) => state.auth);
 
   const [thumbnailImage, setThumbnailImage] = useState(null);
+
+  const [categories, setCategories] =
+  useState([]);
 
   const [formData, setFormData] = useState({
     courseName: "",
@@ -60,6 +63,19 @@ export default function CourseInformationForm() {
     }
   };
 
+  useEffect(() => {
+  const fetchCategories = async () => {
+    const result =
+      await getCategories();
+
+    if (result?.success) {
+      setCategories(result.data);
+    }
+  };
+
+  fetchCategories();
+}, []);
+
   return (
     <div className="rounded-3xl bg-white p-8 shadow-md">
       <div className="grid gap-6">
@@ -89,15 +105,27 @@ export default function CourseInformationForm() {
           onChange={handleChange}
           className="w-full rounded-xl border p-4"
         />
+        
+        <select
+  name="category"
+  value={formData.category}
+  onChange={handleChange}
+  className="w-full rounded-xl border p-4"
+>
+  <option value="">
+    Select Category
+  </option>
 
-        <input
-          type="text"
-          name="category"
-          placeholder="Category Id"
-          value={formData.category}
-          onChange={handleChange}
-          className="w-full rounded-xl border p-4"
-        />
+  {categories.map((category) => (
+    <option
+      key={category._id}
+      value={category._id}
+    >
+      {category.name}
+    </option>
+  ))}
+</select>
+        
 
         <textarea
           rows="4"

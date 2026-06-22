@@ -1,53 +1,125 @@
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import DashboardLayout from "../DashboardLayout";
-import { useNavigate } from "react-router-dom";
+import { getInstructorDashboard } from "../../../services/operations/courseAPI";
 
-export default function InstructorCourses() {
-  const navigate = useNavigate();
+export default function InstructorDashboard() {
+  const { token } = useSelector(
+    (state) => state.auth
+  );
 
-  // Temporary sample array. Change to an empty array [] to test the "No Courses Yet" state.
-  const courses = [1, 2, 3]; 
+  const [dashboardData, setDashboardData] =
+    useState(null);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    const result =
+      await getInstructorDashboard(
+        token
+      );
+
+    console.log(result);
+
+    if (result?.data) {
+      setDashboardData(result.data);
+    }
+  };
 
   return (
     <DashboardLayout>
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-4xl font-bold">My Courses</h1>
-        <button
-          onClick={() => navigate("/dashboard/create-course")}
-          className="rounded-xl bg-[#2563EB] px-5 py-3 text-white"
-        >
-          + Create Course
-        </button>
-      </div>
+      <h1 className="mb-8 text-4xl font-bold">
+        Instructor Dashboard
+      </h1>
 
-      {courses.length > 0 ? (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {courses.map((course) => (
-            <div key={course} className="rounded-3xl bg-white p-6 shadow-md">
-              <div className="mb-4 h-48 rounded-2xl bg-gray-200"></div>
-              <h2 className="text-xl font-bold">MERN Stack Development</h2>
-              <p className="mt-2 text-gray-500">24 Students Enrolled</p>
-              <button
-                onClick={() => navigate("/dashboard/create-course")}
-                className="mt-4 rounded-xl bg-[#2563EB] px-5 py-3 text-white"
-              >
-                Edit Course
-              </button>
-            </div>
-          ))}
-        </div>
+      {!dashboardData ? (
+        <p>Loading...</p>
       ) : (
-        <div className="rounded-3xl bg-white p-10 text-center shadow-md">
-          <h2 className="text-2xl font-semibold">No Courses Yet</h2>
-          <p className="mt-3 text-gray-500">
-            Create your first course and start teaching.
-          </p>
-          <button
-            onClick={() => navigate("/dashboard/create-course")}
-            className="mt-6 rounded-xl bg-[#2563EB] px-6 py-3 text-white"
-          >
-            Create Course
-          </button>
-        </div>
+        <>
+          {/* Stats */}
+          <div className="mb-8 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl bg-white p-6 shadow-md">
+              <h2 className="text-lg font-semibold text-gray-500">
+                Total Courses
+              </h2>
+
+              <p className="mt-2 text-4xl font-bold">
+                {dashboardData.totalCourses}
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-white p-6 shadow-md">
+              <h2 className="text-lg font-semibold text-gray-500">
+                Total Students
+              </h2>
+
+              <p className="mt-2 text-4xl font-bold">
+                {dashboardData.totalStudents}
+              </p>
+            </div>
+          </div>
+
+          {/* Recent Courses */}
+          <div className="rounded-3xl bg-white p-6 shadow-md">
+            <h2 className="mb-6 text-2xl font-bold">
+              Recent Courses
+            </h2>
+
+            {dashboardData.recentCourses?.length >
+            0 ? (
+              <div className="grid gap-4">
+                {dashboardData.recentCourses.map(
+                  (course) => (
+                    <div
+                      key={course._id}
+                      className="flex items-center gap-4 rounded-xl border p-4"
+                    >
+                      <img
+                        src={course.thumbnail}
+                        alt={course.courseName}
+                        className="h-20 w-28 rounded-lg object-cover"
+                      />
+
+                      <div>
+                        <h3 className="font-bold">
+                          {course.courseName}
+                        </h3>
+
+                        <p className="text-sm text-gray-500">
+                          {
+                            course
+                              .studentsEnrolled
+                              ?.length
+                          }{" "}
+                          Students
+                        </p>
+
+                        <button
+  onClick={() =>
+    navigate(
+      `/dashboard/edit-course/${course._id}`
+    )
+  }
+  className="rounded-xl bg-blue-600 px-4 py-2 text-white"
+>
+  Edit Course
+</button>
+                      </div>
+                    </div>
+
+                  )
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500">
+                No courses created yet.
+              </p>
+            )}
+          </div>
+        </>
       )}
     </DashboardLayout>
   );

@@ -1,37 +1,62 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { createSection } from "../../services/operations/courseAPI";
+import { useSelector, useDispatch } from "react-redux";
 
-export default function AddSection({
-  courseId,
-}) {
+import { createSection } from "../../services/operations/courseAPI";
+import { setCourse } from "../../redux/slices/courseSlice";
+
+import AddLecture from "./AddLecture";
+
+export default function AddSection({ courseId }) {
   const [sectionName, setSectionName] =
     useState("");
+
+  const dispatch = useDispatch();
 
   const { token } = useSelector(
     (state) => state.auth
   );
 
-  const handleAddSection =
-    async () => {
-      if (!sectionName) return;
+  const { course } = useSelector(
+    (state) => state.course
+  );
 
-      const result =
-        await createSection(
-          {
-            sectionName,
-            courseId,
-          },
-          token
-        );
+  console.log("COURSE =", course);
 
-      if (result?.success) {
-        setSectionName("");
-      }
-    };
+  const handleAddSection = async () => {
+    if (!sectionName) return;
+
+    const result = await createSection(
+      {
+        sectionName,
+        courseId,
+      },
+      token
+    );
+
+    console.log(result);
+
+    if (result?.success) {
+      dispatch(
+        setCourse(
+          result.updatedCourseDetails
+        )
+      );
+
+      setSectionName("");
+    }
+  };
 
   return (
     <div>
+      {/* Course Name */}
+
+      <h2 className="mb-2 text-xl font-semibold">
+        Course:
+        {" "}
+        {course?.courseName}
+      </h2>
+
+      {/* Add Section Form */}
 
       <h2 className="mb-4 text-2xl font-bold">
         Add Section
@@ -54,6 +79,41 @@ export default function AddSection({
         Add Section
       </button>
 
+      {/* Sections List */}
+
+      <div className="mt-10">
+        <h2 className="mb-4 text-2xl font-bold">
+          Course Sections
+        </h2>
+
+        {course?.courseContent?.length >
+        0 ? (
+          course.courseContent.map(
+            (section) => (
+              <div
+                key={section._id}
+                className="mb-4 rounded-xl border p-4"
+              >
+                <h3 className="mb-4 font-bold">
+                  {
+                    section.sectionName
+                  }
+                </h3>
+
+                <AddLecture
+                  sectionId={
+                    section._id
+                  }
+                />
+              </div>
+            )
+          )
+        ) : (
+          <p className="text-gray-500">
+            No sections added yet
+          </p>
+        )}
+      </div>
     </div>
   );
 }

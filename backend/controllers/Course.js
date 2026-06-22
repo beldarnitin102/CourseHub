@@ -8,7 +8,7 @@ exports.createCourse = async (req, res) => {
     //fetch data
     const {
       courseName,
-      courseDescription,
+      courseDescirption,
       whatYouWillLearn,
       price,
       tags,
@@ -21,20 +21,22 @@ exports.createCourse = async (req, res) => {
 
     if (
       !courseName ||
-      !courseDescription ||
+      !courseDescirption ||
       !whatYouWillLearn ||
       !price ||
       !tags ||
+      !category ||
       !thumbnail
     ) {
       console.log(
         courseName,
-        courseDescription,
+        courseDescirption,
         whatYouWillLearn,
         price,
         tags,
         thumbnail,
       );
+      console.log(req.body);
       return res.status(400).json({
         success: false,
         message: " All fileds are required",
@@ -54,6 +56,7 @@ exports.createCourse = async (req, res) => {
     // check category valid or not
 
     const CategoreyDetails = await Category.findById(category);
+    console.log("Category:", category);
 
     if (!CategoreyDetails) {
       console.log(err.message);
@@ -74,7 +77,7 @@ exports.createCourse = async (req, res) => {
 
     const newCourse = await Course.create({
       courseName,
-      courseDescription,
+      courseDescirption,
       instructor: instructorDetails._id,
       whatYouWillLearn,
       price,
@@ -147,37 +150,40 @@ exports.showAllCourses = async (req, res) => {
 exports.getCourseDetails = async (req, res) => {
   try {
     const { courseId } = req.body;
-    const getcourseDetails = await Course.find({ _id: courseId })
-      .populate({
-        path: "instructor",
-        populate: {
-          path: "additionalDetails",
-        },
-      })
-      .populate("category")
-      .populate("ratingAndReviews")
-      .populate({
-        path: "courseContent",
-        populate: {
-          path: "subSection",
-        },
-      })
-      .exec();
+
+    const getcourseDetails =
+      await Course.findById(courseId)
+        .populate({
+          path: "instructor",
+          populate: {
+            path: "additionalDetails",
+          },
+        })
+        .populate("category")
+        .populate("studentsEnrolled")
+        .populate("ratingAndReviews")
+        .populate({
+          path: "courseContent",
+          populate: {
+            path: "subSection",
+          },
+        });
 
     if (!getcourseDetails) {
-      return res.status(500).json({
+      return res.status(404).json({
         success: false,
-        message: `could nor find the course with ${courseId}`,
+        message: `Could not find course with id ${courseId}`,
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "course detail fetch succesfully ",
+      message: "Course details fetched successfully",
       data: getcourseDetails,
     });
   } catch (err) {
     console.log(err);
+
     return res.status(500).json({
       success: false,
       message: err.message,
@@ -191,16 +197,58 @@ exports.getInstructorCourses = async (req, res) => {
 
     const courses = await Course.find({
       instructor: instructorId,
-    });
+    })
+      .populate("category")
+      .populate("studentsEnrolled")
+      .sort({
+        createdAt: -1,
+      });
 
     return res.status(200).json({
       success: true,
       data: courses,
     });
-  } catch (err) {
+  } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch courses",
+      message: "Failed to fetch instructor courses",
+    });
+  }
+};
+
+exports.getInstructorDashboard = async (req, res) => {
+  try {
+    const courses = await Course.find({
+      instructor: req.user.id,
+    })
+      .populate("studentsEnrolled")
+      .sort({ createdAt: -1 });
+
+    const totalCourses = courses.length;
+
+    const totalStudents = courses.reduce(
+      (acc, course) => acc + course.studentsEnrolled.length,
+      0,
+    );
+
+    const recentCourses = courses.slice(0, 5);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalCourses,
+        totalStudents,
+        recentCourses,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch dashboard data",
     });
   }
 };
