@@ -34,6 +34,7 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import MyProfile from "../pages/MyProfile";
 import InstructorCourses from "../pages/dashboard/instructor/InstructorCourses";
+import EditCourse from "../pages/dashboard/instructor/EditCourse";
 
 export default function AppRoutes() {
   return (
@@ -199,6 +200,11 @@ export default function AppRoutes() {
       <Route path="/courses" element={<Courses />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+
+      <Route
+  path="/dashboard/edit-course/:courseId"
+  element={<EditCourse />}
+/>
     </Routes>
   );
 }

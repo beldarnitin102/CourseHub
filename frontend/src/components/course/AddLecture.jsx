@@ -2,58 +2,48 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { createSubSection } from "../../services/operations/courseAPI";
 
-export default function AddLecture({
-  sectionId,
-}) {
-  const { token } = useSelector(
-    (state) => state.auth
-  );
+export default function AddLecture({ sectionId }) {
+  const { course } = useSelector((state) => state.course);
 
-  const [lectureData, setLectureData] =
-    useState({
-      title: "",
-      description: "",
-      timeduration: "",
-      videoUrl: "",
-    });
+  const { token } = useSelector((state) => state.auth);
+
+  const [lectureData, setLectureData] = useState({
+    title: "",
+    description: "",
+    timeduration: "",
+    videoUrl: "",
+  });
 
   const handleChange = (e) => {
     setLectureData((prev) => ({
       ...prev,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleAddLecture =
-    async () => {
-      const data = {
-        sectionId,
-        ...lectureData,
-      };
-
-      const result =
-        await createSubSection(
-          data,
-          token
-        );
-
-      if (result?.success) {
-        setLectureData({
-          title: "",
-          description: "",
-          timeduration: "",
-          videoUrl: "",
-        });
-      }
+  const handleAddLecture = async () => {
+    const data = {
+      sectionId,
+      ...lectureData,
     };
+
+    const result = await createSubSection(data, token);
+
+    if (result?.success) {
+      setLectureData({
+        title: "",
+        description: "",
+        timeduration: "",
+        videoUrl: "",
+      });
+    }
+  };
 
   return (
     <div className="mt-6 rounded-2xl border p-6">
+      <h2 className="mb-4 text-xl font-bold">{course?.courseName}</h2>
 
-      <h3 className="mb-4 text-xl font-bold">
-        Add Lecture
-      </h3>
+      <h3 className="mb-4 text-xl font-bold">Add Lecture</h3>
 
       <input
         type="text"
@@ -97,7 +87,6 @@ export default function AddLecture({
       >
         Add Lecture
       </button>
-
     </div>
   );
 }
