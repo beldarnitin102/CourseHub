@@ -1,7 +1,11 @@
-import { useEffect , useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createCourse,  getCategories } from "../../services/operations/courseAPI";
+import {
+  createCourse,
+  getCategories,
+  updateCourse,
+} from "../../services/operations/courseAPI";
 import { useDispatch } from "react-redux";
 import { setCourse } from "../../redux/slices/courseSlice";
 
@@ -14,8 +18,9 @@ export default function CourseInformationForm() {
 
   const [thumbnailImage, setThumbnailImage] = useState(null);
 
-  const [categories, setCategories] =
-  useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const { course, editCourse } = useSelector((state) => state.course);
 
   const [formData, setFormData] = useState({
     courseName: "",
@@ -25,6 +30,19 @@ export default function CourseInformationForm() {
     whatYouWillLearn: "",
     tags: "",
   });
+
+  useEffect(() => {
+    if (editCourse && course) {
+      setFormData({
+        courseName: course.courseName || "",
+        courseDescirption: course.courseDescription || "",
+        price: course.price || "",
+        category: course.category?._id || course.category || "",
+        whatYouWillLearn: course.whatYouWillLearn || "",
+        tags: course.tags?.join(",") || course.tag?.join(",") || "",
+      });
+    }
+  }, [course, editCourse]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -48,33 +66,38 @@ export default function CourseInformationForm() {
 
     data.append("tags", formData.tags);
 
-    data.append("thumbnailImage", thumbnailImage);
+    if (thumbnailImage) {
+      data.append("thumbnailImage", thumbnailImage);
+    }
 
-    const result = await createCourse(data, token);
+    let result;
+
+    if (editCourse) {
+      data.append("courseId", course._id);
+
+      result = await updateCourse(data, token);
+    } else {
+      result = await createCourse(data, token);
+    }
 
     if (result?.success) {
-      localStorage.setItem("courseId", result.courseId);
+      dispatch(setCourse(result.data));
 
-        dispatch(
-    setCourse(result.data)
-  );
-
-      navigate("/dashboard/course-builder");
+      navigate("/dashboard/instructor-courses");
     }
   };
 
   useEffect(() => {
-  const fetchCategories = async () => {
-    const result =
-      await getCategories();
+    const fetchCategories = async () => {
+      const result = await getCategories();
 
-    if (result?.success) {
-      setCategories(result.data);
-    }
-  };
+      if (result?.success) {
+        setCategories(result.data);
+      }
+    };
 
-  fetchCategories();
-}, []);
+    fetchCategories();
+  }, []);
 
   return (
     <div className="rounded-3xl bg-white p-8 shadow-md">
@@ -105,27 +128,21 @@ export default function CourseInformationForm() {
           onChange={handleChange}
           className="w-full rounded-xl border p-4"
         />
-        
-        <select
-  name="category"
-  value={formData.category}
-  onChange={handleChange}
-  className="w-full rounded-xl border p-4"
->
-  <option value="">
-    Select Category
-  </option>
 
-  {categories.map((category) => (
-    <option
-      key={category._id}
-      value={category._id}
-    >
-      {category.name}
-    </option>
-  ))}
-</select>
-        
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          className="w-full rounded-xl border p-4"
+        >
+          <option value="">Select Category</option>
+
+          {categories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
 
         <textarea
           rows="4"
@@ -155,7 +172,7 @@ export default function CourseInformationForm() {
           onClick={handleSubmit}
           className="rounded-xl bg-[#2563EB] py-4 font-semibold text-white"
         >
-          Save & Continue
+          {editCourse ? "Update Course" : "Save & Continue"}
         </button>
       </div>
     </div>

@@ -7,43 +7,52 @@ import CourseInformationForm from "../../../components/course/CourseInformationF
 import AddSection from "../../../components/course/AddSection";
 
 import { getCourseDetails } from "../../../services/operations/courseAPI";
-import { setCourse } from "../../../redux/slices/courseSlice";
+
+import {
+setCourse,
+setEditCourse,
+} from "../../../redux/slices/courseSlice";
 
 export default function EditCourse() {
-  const { courseId } = useParams();
+const { courseId } = useParams();
 
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetchCourse();
-  }, []);
+useEffect(() => {
+fetchCourse();
 
-  const fetchCourse = async () => {
-    const result =
-      await getCourseDetails(courseId);
 
-    console.log(result);
+return () => {
+  dispatch(setEditCourse(false));
+};
 
-    if (result?.success) {
-      dispatch(
-        setCourse(result.data)
-      );
-    }
-  };
 
-  return (
-    <DashboardLayout>
-      <h1 className="mb-8 text-4xl font-bold">
-        Edit Course
-      </h1>
+}, []);
 
-      <CourseInformationForm />
+const fetchCourse = async () => {
+const result = await getCourseDetails(courseId);
 
-      <div className="mt-8">
-        <AddSection
-          courseId={courseId}
-        />
-      </div>
-    </DashboardLayout>
-  );
+
+console.log(result);
+
+if (result?.success) {
+  dispatch(setCourse(result.data));
+  dispatch(setEditCourse(true));
+}
+
+
+};
+
+return ( <DashboardLayout> <h1 className="mb-8 text-4xl font-bold">
+Edit Course </h1>
+
+  <CourseInformationForm />
+
+  <div className="mt-8">
+    <AddSection courseId={courseId} />
+  </div>
+</DashboardLayout>
+
+
+);
 }

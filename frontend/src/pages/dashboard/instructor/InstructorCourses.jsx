@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../DashboardLayout";
-import { getInstructorCourses } from "../../../services/operations/courseAPI";
+import { getInstructorCourses,  deleteCourse } from "../../../services/operations/courseAPI";
 
 export default function InstructorCourses() {
 const navigate = useNavigate();
@@ -32,9 +32,9 @@ token
 
 console.log(result);
 
-if (result?.data?.data) {
+if (result?.data) {
   setCourses(
-    result.data.data
+    result.data
   );
 }
 

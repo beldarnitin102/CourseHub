@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { logout } from "../../redux/slices/authSlice";
 import { setUser } from "../../redux/slices/profileSlice";
@@ -12,7 +12,14 @@ export default function Sidebar() {
 
   const [open, setOpen] = useState(false);
 
-  const links = [
+  const user = useSelector(
+    (state) => state.profile.user
+  );
+
+  const accountType =
+    user?.accountType;
+
+  const studentLinks = [
     {
       name: "Dashboard",
       path: "/dashboard",
@@ -38,28 +45,45 @@ export default function Sidebar() {
       path: "/cart",
       icon: "🛒",
     },
-
-    {
-  name: "Instructor Dashboard",
-  path: "/dashboard/instructor",
-  icon: "🎓",
-},
-{
-  name: "Create Course",
-  path: "/dashboard/create-course",
-  icon: "➕",
-},
-{
-  name: "Course Builder",
-  path: "/dashboard/course-builder",
-  icon: "🛠️",
-},
-{
-  name: "My Courses",
-  path: "/dashboard/instructor-courses",
-  icon: "📚",
-}
   ];
+
+  const instructorLinks = [
+    {
+      name: "Instructor Dashboard",
+      path: "/dashboard/instructor",
+      icon: "🎓",
+    },
+    {
+      name: "Create Course",
+      path: "/dashboard/create-course",
+      icon: "➕",
+    },
+    {
+      name: "Course Builder",
+      path: "/dashboard/course-builder",
+      icon: "🛠️",
+    },
+    {
+      name: "My Courses",
+      path: "/dashboard/instructor-courses",
+      icon: "📚",
+    },
+    {
+      name: "Profile",
+      path: "/dashboard/profile",
+      icon: "👤",
+    },
+    {
+      name: "Settings",
+      path: "/dashboard/settings",
+      icon: "⚙️",
+    },
+  ];
+
+  const links =
+    accountType === "Instructor"
+      ? instructorLinks
+      : studentLinks;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -73,7 +97,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Header */}
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b bg-white px-5 lg:hidden">
         <h2 className="font-bold text-[#111827]">
           CourseHub
@@ -87,7 +110,6 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Overlay */}
       {open && (
         <div
           onClick={() => setOpen(false)}
@@ -95,7 +117,6 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed left-0 top-0 z-50 h-screen w-72 bg-white shadow-xl transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"}
@@ -142,7 +163,6 @@ export default function Sidebar() {
         </nav>
       </aside>
 
-      {/* Desktop Spacer */}
       <div className="hidden w-72 lg:block"></div>
     </>
   );
