@@ -21,3 +21,8 @@ export const courseEndpoints = {
   GET_COURSE_DETAILS: `${BASE_URL}/course/getCourseDetails`,
   GET_ALL_COURSES: `${BASE_URL}/course/getAllCourses`,
 };
+
+export const paymentEndpoints = {
+  CAPTURE_PAYMENT: `${BASE_URL}/payment/capturePayment`,
+  VERIFY_PAYMENT: `${BASE_URL}/payment/verifySignature`,
+};

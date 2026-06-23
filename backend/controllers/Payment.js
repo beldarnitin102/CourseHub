@@ -74,87 +74,104 @@ exports.capturePayment = async (req, res) => {
 };
 
 exports.verifySignature = async (req, res) => {
-  try {
-    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+try {
+const {
+razorpay_order_id,
+razorpay_payment_id,
+razorpay_signature,
+courseId,
+} = req.body;
 
-    const signature = req.headers["x-razorpay-signature"];
 
-    const shasum = crypto.createHmac("sha256", webhookSecret);
+const userId = req.user.id;
 
-    shasum.update(JSON.stringify(req.body));
+const body =
+  razorpay_order_id +
+  "|" +
+  razorpay_payment_id;
 
-    const digest = shasum.digest("hex");
+const expectedSignature =
+  crypto
+    .createHmac(
+      "sha256",
+      process.env.RAZORPAY_SECRET
+    )
+    .update(body.toString())
+    .digest("hex");
 
-    if (signature !== digest) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Signature",
-      });
-    }
+if (
+  expectedSignature !==
+  razorpay_signature
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Payment Verification Failed",
+  });
+}
 
-    console.log("Payment Authorized");
-
-    const { courseId, userId } = req.body.payload.payment.entity.notes;
-
-    // Add student to course
-
-    const enrolledCourse = await Course.findByIdAndUpdate(
-      courseId,
-      {
-        $push: {
-          studentsEnrolled: userId,
-        },
+const enrolledCourse =
+  await Course.findByIdAndUpdate(
+    courseId,
+    {
+      $addToSet: {
+        studentsEnrolled: userId,
       },
-      { new: true },
-    );
+    },
+    { new: true }
+  );
 
-    if (!enrolledCourse) {
-      return res.status(404).json({
-        success: false,
-        message: "Course not found",
-      });
-    }
+if (!enrolledCourse) {
+  return res.status(404).json({
+    success: false,
+    message: "Course Not Found",
+  });
+}
 
-    // Add course to student
-
-    const enrolledStudent = await User.findByIdAndUpdate(
-      userId,
-      {
-        $push: {
-          courses: courseId,
-        },
+const enrolledStudent =
+  await User.findByIdAndUpdate(
+    userId,
+    {
+      $addToSet: {
+        courses: courseId,
       },
-      { new: true },
-    );
+    },
+    { new: true }
+  );
 
-    if (!enrolledStudent) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found",
-      });
-    }
+if (!enrolledStudent) {
+  return res.status(404).json({
+    success: false,
+    message: "Student Not Found",
+  });
+}
 
-    // Send Enrollment Email
+await mailSender(
+  enrolledStudent.email,
+  "Course Enrollment Successful",
+  courseEnrollementEmail(
+    enrolledCourse.courseName,
+    `${enrolledStudent.firstName}
+     ${enrolledStudent.lastName}`
+  )
+);
 
-    await mailSender(
-      enrolledStudent.email,
-      "Course Enrollment Successful",
-      courseEnrollementEmail(
-        enrolledCourse.courseName,
-        `${enrolledStudent.firstName} ${enrolledStudent.lastName}`,
-      ),
-    );
+return res.status(200).json({
+  success: true,
+  message:
+    "Payment Verified Successfully",
+});
 
-    return res.status(200).json({
-      success: true,
-      message: "Payment verified and student enrolled successfully",
-    });
-  } catch (err) {
-    console.log(err);
 
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+} catch (error) {
+console.log(error);
+
+
+return res.status(500).json({
+  success: false,
+  message: error.message,
+});
+
+
+}
 };
+
