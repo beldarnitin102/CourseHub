@@ -12,18 +12,20 @@ export default function Sidebar() {
 
   const [open, setOpen] = useState(false);
 
-  const user = useSelector(
-    (state) => state.profile.user
-  );
+  const user = useSelector((state) => state.profile.user);
 
-  const accountType =
-    user?.accountType;
+  const accountType = user?.accountType;
 
   const studentLinks = [
     {
       name: "Dashboard",
       path: "/dashboard",
       icon: "🏠",
+    },
+    {
+      name: "Courses",
+      path: "/dashboard/courses",
+      icon: "🎯",
     },
     {
       name: "My Courses",
@@ -80,10 +82,7 @@ export default function Sidebar() {
     },
   ];
 
-  const links =
-    accountType === "Instructor"
-      ? instructorLinks
-      : studentLinks;
+  const links = accountType === "Instructor" ? instructorLinks : studentLinks;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -98,14 +97,9 @@ export default function Sidebar() {
   return (
     <>
       <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b bg-white px-5 lg:hidden">
-        <h2 className="font-bold text-[#111827]">
-          CourseHub
-        </h2>
+        <h2 className="font-bold text-[#111827]">CourseHub</h2>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-2xl"
-        >
+        <button onClick={() => setOpen(!open)} className="text-2xl">
           ☰
         </button>
       </div>
@@ -125,14 +119,10 @@ export default function Sidebar() {
         <div className="border-b p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#2563EB]">
-              <span className="font-bold text-white">
-                CH
-              </span>
+              <span className="font-bold text-white">CH</span>
             </div>
 
-            <h2 className="text-xl font-bold">
-              CourseHub
-            </h2>
+            <h2 className="text-xl font-bold">CourseHub</h2>
           </div>
         </div>
 

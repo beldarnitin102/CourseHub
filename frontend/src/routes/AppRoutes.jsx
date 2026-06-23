@@ -35,6 +35,8 @@ import Contact from "../pages/Contact";
 import MyProfile from "../pages/MyProfile";
 import InstructorCourses from "../pages/dashboard/instructor/InstructorCourses";
 import EditCourse from "../pages/dashboard/instructor/EditCourse";
+import DashboardLayout from "../pages/dashboard/DashboardLayout";
+import MainLayout from "../layouts/MainLayout";
 
 export default function AppRoutes() {
   return (
@@ -51,7 +53,15 @@ export default function AppRoutes() {
 
       <Route path="/update-password/:token" element={<ResetPassword />} />
 
-      <Route path="/course/:courseId" element={<CourseDetails />} />
+      <Route
+        path="/dashboard/course/:courseId"
+        element={
+          <DashboardLayout>
+            <CourseDetails />
+          </DashboardLayout>
+        }
+      />
+
       <Route
         path="/dashboard"
         element={
@@ -62,6 +72,24 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/courses"
+        element={
+          <MainLayout>
+            <Courses />
+          </MainLayout>
+        }
+      />
+
+      <Route
+  path="/course/:courseId"
+  element={
+    <MainLayout>
+      <CourseDetails />
+    </MainLayout>
+  }
+/>
 
       <Route
         path="/dashboard/profile"
@@ -102,6 +130,15 @@ export default function AppRoutes() {
               <MyCourses />
             </StudentRoute>
           </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/courses"
+        element={
+          <DashboardLayout>
+            <Courses />
+          </DashboardLayout>
         }
       />
 
@@ -163,15 +200,15 @@ export default function AppRoutes() {
       />
 
       <Route
-  path="/dashboard/instructor-courses"
-  element={
-    <PrivateRoute>
-      <InstructorRoute>
-        <InstructorCourses />
-      </InstructorRoute>
-    </PrivateRoute>
-  }
-/>
+        path="/dashboard/instructor-courses"
+        element={
+          <PrivateRoute>
+            <InstructorRoute>
+              <InstructorCourses />
+            </InstructorRoute>
+          </PrivateRoute>
+        }
+      />
 
       {/* ================= COMMON PROTECTED ================= */}
 
@@ -197,14 +234,11 @@ export default function AppRoutes() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
 
-      <Route path="/courses" element={<Courses />} />
+      
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 
-      <Route
-  path="/dashboard/edit-course/:courseId"
-  element={<EditCourse />}
-/>
+      <Route path="/dashboard/edit-course/:courseId" element={<EditCourse />} />
     </Routes>
   );
 }

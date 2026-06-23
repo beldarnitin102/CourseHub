@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 
-import MainLayout from "../../layouts/MainLayout";
 
 import {
 getAllCourses,
 } from "../../services/operations/courseAPI";
 
 export default function Courses() {
+
 const navigate = useNavigate();
+const location = useLocation();
 
 const [courses, setCourses] =
 useState([]);
@@ -27,7 +28,8 @@ setCourses(result.data);
 };
 
 
-return ( <MainLayout> <section className="min-h-screen bg-[#F3F4F6] py-20">
+return (  <div>
+   <section className="min-h-screen bg-[#F3F4F6] py-20">
 
 
     <div className="mx-auto max-w-7xl px-6">
@@ -46,11 +48,21 @@ return ( <MainLayout> <section className="min-h-screen bg-[#F3F4F6] py-20">
           {courses.map((course) => (
             <div
               key={course._id}
-              onClick={() =>
-                navigate(
-                  `/course/${course._id}`
-                )
-              }
+              onClick={() => {
+  if (
+    location.pathname.startsWith(
+      "/dashboard"
+    )
+  ) {
+    navigate(
+      `/dashboard/course/${course._id}`
+    );
+  } else {
+    navigate(
+      `/course/${course._id}`
+    );
+  }
+}}
               className="cursor-pointer rounded-3xl bg-white p-6 shadow-md transition hover:-translate-y-2 hover:shadow-xl"
             >
 
@@ -95,7 +107,8 @@ return ( <MainLayout> <section className="min-h-screen bg-[#F3F4F6] py-20">
     </div>
 
   </section>
-</MainLayout>
+  </div>
+
 
 );
 }

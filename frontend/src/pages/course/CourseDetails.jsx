@@ -32,17 +32,15 @@ export default function CourseDetails() {
   };
 
   if (!course) {
-    return (
-      <MainLayout>
-        <div className="p-10">
-          Loading...
-        </div>
-      </MainLayout>
-    );
-  }
+  return (
+    <div className="p-10">
+      Loading...
+    </div>
+  );
+}
 
   return (
-    <MainLayout>
+    
       <section className="bg-[#F3F4F6] py-16">
         <div className="mx-auto max-w-7xl px-6">
 
@@ -85,6 +83,6 @@ export default function CourseDetails() {
 
         </div>
       </section>
-    </MainLayout>
+    
   );
 }
