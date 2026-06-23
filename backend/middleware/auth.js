@@ -1,100 +1,93 @@
-const jwt = require("jsonwebtoken")
-require("dotenv").config
-const User = require("../models/User")
+const jwt = require("jsonwebtoken");
+require("dotenv").config;
+const User = require("../models/User");
+require("dotenv").config();
 
-//token get from body , cokkies , bearer token and best way to get bearer token and avoid from body 
-
-exports.auth = async(req,res,next) => {
-
+exports.auth = async (req, res, next) => {
   try {
-    
-    const token = req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer","")
-
-    if(!token) {
-      return res.status(401).json({
-        success : false,
-        message : "Token is missing"
-      })
-    }
      
-    //verification of token 
+    const token =
+      req.body?.token ||
+      req.cookies?.token ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Token Missing",
+      });
+    }
 
     try {
-      const decode = jwt.verify(token , process.env.JWT_SECRET)
-      req.user = decode
+      const decode = jwt.verify(token, process.env.JWT_SECRET);
 
-    } catch (err) {
+      req.user = decode;
+    } catch (error) {
       return res.status(401).json({
-        success : false,
-        message : "Token is invalid"
-      })
+        success: false,
+        message: "Token Invalid",
+      });
     }
 
-    next()
-
-
-  } catch (err) {
-    console.log(err)
+    next();
+  } catch (error) {
     return res.status(401).json({
-        success : false,
-        message : "something went wrong with validating the token"
-      })
+      success: false,
+      message: "Something went wrong",
+    });
   }
-}
+};
 
-exports.isStudent = async (req,res,next) => {
+exports.isStudent = async (req, res, next) => {
   try {
-    
-    if(req.user.accountType !== "Student") {
+    if (req.user.accountType !== "Student") {
       return res.status(401).json({
-        success : false,
-        message : "This is protected routes for Students only"
-      })
+        success: false,
+        message: "This is protected routes for Students only",
+      });
     }
 
-    next()
+    next();
   } catch (err) {
     return res.status(500).json({
-        success : false,
-        message : "User role cannot be verified pleased try again"
-      })
+      success: false,
+      message: "User role cannot be verified pleased try again",
+    });
   }
-}
+};
 
-exports.isInstructor = async (req,res,next) => {
+exports.isInstructor = async (req, res, next) => {
   try {
-    
-    if(req.user.accountType !== "Instructor") {
+    if (req.user.accountType !== "Instructor") {
       return res.status(401).json({
-        success : false,
-        message : "This is protected routes for Instructr only"
-      })
+        success: false,
+        message: "This is protected routes for Instructr only",
+      });
     }
 
-    next()
+    next();
   } catch (err) {
     return res.status(500).json({
-        success : false,
-        message : "User role cannot be verified pleased try again"
-      })
+      success: false,
+      message: "User role cannot be verified pleased try again",
+    });
   }
-}
+};
 
-exports.isAdmin = async (req,res,next) => {
+exports.isAdmin = async (req, res, next) => {
   try {
-    
-    if(req.user.accountType !== "Admin") {
+    if (req.user.accountType !== "Admin") {
       return res.status(401).json({
-        success : false,
-        message : "This is protected routes for Admin only"
-      })
+        success: false,
+        message: "This is protected routes for Admin only",
+      });
     }
 
-    next()
+    next();
   } catch (err) {
     return res.status(500).json({
-        success : false,
-        message : "User role cannot be verified pleased try again"
-      })
+      success: false,
+      message: "User role cannot be verified pleased try again",
+    });
   }
-}
+};

@@ -128,7 +128,7 @@ export const getAllCourses = async () => {
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/course/getAllCourses`,
+      `${BASE_URL}/course/getAllCourses`
     );
 
     return response.data;
@@ -140,22 +140,21 @@ export const getAllCourses = async () => {
 
 export const getInstructorCourses = async (token) => {
   try {
-    // Making the GET request and passing the token in the Authorization header
     const response = await axios.get(
-      `${BASE_URL}/course/getInstructorCourses`,
+      `${BASE_URL}/course/instructorCourses`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
-    // Your component reads 'result.data', so we return the response directly
-    // (Axios puts the server response body inside a 'data' property)
-    return response;
+    console.log(response.data);
+
+    return response.data;
   } catch (error) {
-    console.error("GET_INSTRUCTOR_COURSES_API ERROR...", error);
-    // Return an empty object or null so 'result?.data' doesn't crash the app on failure
+    console.log(error);
+
     return null;
   }
 };
@@ -183,6 +182,73 @@ export const getCategories = async () => {
     const response = await apiConnector(
       "GET",
       `${BASE_URL}/course/showAllCatogories`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const updateCourse = async (formData, token) => {
+  const toastId = toast.loading("Updating Course...");
+
+  try {
+    const response = await apiConnector(
+      "POST",
+      `${BASE_URL}/course/updateCourse`,
+      formData,
+      {
+        Authorization: `Bearer ${token}`,
+      },
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    toast.success("Course Updated Successfully");
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+
+    toast.error(error?.response?.data?.message || "Failed To Update Course");
+
+    return null;
+  } finally {
+    toast.dismiss(toastId);
+  }
+};
+
+export const getInstructorCourse = async (courseId, token) => {
+  try {
+    const response = await apiConnector(
+      "GET",
+      `${BASE_URL}/course/instructorCourse/${courseId}`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const deleteCourse = async (courseId, token) => {
+  try {
+    const response = await apiConnector(
+      "DELETE",
+      `${BASE_URL}/course/deleteCourse`,
+      { courseId },
+      {
+        Authorization: `Bearer ${token}`,
+      },
     );
 
     return response.data;

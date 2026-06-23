@@ -103,20 +103,112 @@ return res.status(500).json({
 
 
 
-exports.updateSubSection = async (req,res) => {
+exports.updateSubSection = async (
+  req,
+  res
+) => {
   try {
-    
-  } catch (err) {
-    
-  }
-}
+    const {
+      subSectionId,
+      title,
+      description,
+      timeduration,
+      videoUrl,
+    } = req.body;
 
-exports.deleteSubSection = async (req,res) => {
-  try {
-    
+    const updateData = {};
+
+    if (title)
+      updateData.title = title;
+
+    if (description)
+      updateData.description =
+        description;
+
+    if (timeduration)
+      updateData.timeDuration =
+        timeduration;
+
+    if (videoUrl)
+      updateData.videoUrl =
+        videoUrl;
+
+    if (
+      req.files &&
+      req.files.videoFile
+    ) {
+      const uploadDetails =
+        await uploadImageToCloudinary(
+          req.files.videoFile,
+          process.env.FOLDER_NAME
+        );
+
+      updateData.videoUrl =
+        uploadDetails.secure_url;
+    }
+
+    const updatedSubSection =
+      await SubSection.findByIdAndUpdate(
+        subSectionId,
+        updateData,
+        { new: true }
+      );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Lecture updated successfully",
+      data: updatedSubSection,
+    });
   } catch (err) {
-    
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Error updating lecture",
+    });
   }
-}
+};
+
+exports.deleteSubSection = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      sectionId,
+      subSectionId,
+    } = req.body;
+
+    await Section.findByIdAndUpdate(
+      sectionId,
+      {
+        $pull: {
+          subSection:
+            subSectionId,
+        },
+      }
+    );
+
+    await SubSection.findByIdAndDelete(
+      subSectionId
+    );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Lecture deleted successfully",
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Error deleting lecture",
+    });
+  }
+};
 //todo update subsection and delete subsection 
 

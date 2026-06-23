@@ -7,6 +7,9 @@ const {
   getCourseDetails,
   getInstructorCourses,
   getInstructorDashboard,
+  getInstructorCourse,
+  updateCourse,
+  deleteCourse,
 } = require("../controllers/Course");
 
 const {
@@ -41,9 +44,8 @@ const {
   isAdmin,
 } = require("../middleware/auth");
 
-
-
 router.post("/createCourse", auth, isInstructor, createCourse);
+router.post("/updateCourse", auth, isInstructor, updateCourse);
 router.post("/addSection", auth, isInstructor, createSection);
 router.post("/updateSection", auth, isInstructor, updateSection);
 router.post("/deleteSection", auth, isInstructor, deleteSection);
@@ -51,11 +53,17 @@ router.post("/deleteSection", auth, isInstructor, deleteSection);
 router.get("/getAllCourses", showAllCourses);
 router.post("/getCourseDetails", getCourseDetails);
 router.get("/instructorCourses", auth, isInstructor, getInstructorCourses);
+router.get(
+  "/instructorCourse/:courseId",auth,isInstructor,getInstructorCourse,);
 router.get("/instructorDashboard", auth, isInstructor, getInstructorDashboard);
 
-router.post("/createSubSection", createSubSection);
-router.post("/updateSubSection", updateSubSection);
-router.post("/deleteSubSection", deleteSubSection);
+router.delete("/deleteCourse", auth, isInstructor, deleteCourse);
+
+router.post("/createSubSection", auth, isInstructor, createSubSection);
+
+router.post("/updateSubSection", auth, isInstructor, updateSubSection);
+
+router.post("/deleteSubSection", auth, isInstructor, deleteSubSection);
 
 router.get("/showAllCatogories", showAllCatgorey);
 router.post("/getCategoryPageDetails", categoriesPageDetails);

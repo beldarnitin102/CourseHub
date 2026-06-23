@@ -5,24 +5,15 @@ import { authEndpoints } from "../endpoints";
 import { setToken } from "../../redux/slices/authSlice";
 import { setUser } from "../../redux/slices/profileSlice";
 
-const {
-  SEND_OTP,
-  SIGNUP,
-  LOGIN,
-  RESET_PASSWORD_TOKEN,
-  RESET_PASSWORD,
-} = authEndpoints;
+const { SEND_OTP, SIGNUP, LOGIN, RESET_PASSWORD_TOKEN, RESET_PASSWORD } =
+  authEndpoints;
 
 // SEND OTP
 export const sendOTP = async (email) => {
   const toastId = toast.loading("Sending OTP...");
 
   try {
-    const response = await apiConnector(
-      "POST",
-      SEND_OTP,
-      { email }
-    );
+    const response = await apiConnector("POST", SEND_OTP, { email });
 
     if (!response.data.success) {
       throw new Error(response.data.message);
@@ -31,10 +22,7 @@ export const sendOTP = async (email) => {
     toast.success("OTP Sent Successfully");
     return true;
   } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed To Send OTP"
-    );
+    toast.error(error?.response?.data?.message || "Failed To Send OTP");
     return false;
   } finally {
     toast.dismiss(toastId);
@@ -42,18 +30,11 @@ export const sendOTP = async (email) => {
 };
 
 // SIGNUP
-export const signup = async (
-  formData,
-  navigate
-) => {
+export const signup = async (formData, navigate) => {
   const toastId = toast.loading("Creating Account...");
 
   try {
-    const response = await apiConnector(
-      "POST",
-      SIGNUP,
-      formData
-    );
+    const response = await apiConnector("POST", SIGNUP, formData);
 
     if (!response.data.success) {
       throw new Error(response.data.message);
@@ -63,105 +44,66 @@ export const signup = async (
 
     navigate("/login");
   } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Signup Failed"
-    );
+    toast.error(error?.response?.data?.message || "Signup Failed");
   } finally {
     toast.dismiss(toastId);
   }
 };
 
 // LOGIN
-export const login = async (
-  email,
-  password,
-  dispatch,
-  navigate
-) => {
+export const login = async (email, password, dispatch, navigate) => {
   const toastId = toast.loading("Logging In...");
 
   try {
-    const response = await apiConnector(
-      "POST",
-      LOGIN,
-      {
-        email,
-        password,
-      }
-    );
+    const response = await apiConnector("POST", LOGIN, {
+      email,
+      password,
+    });
 
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
 
-    dispatch(
-      setToken(response.data.token)
-    );
+    dispatch(setToken(response.data.token));
 
-    dispatch(
-      setUser(response.data.user)
-    );
+    dispatch(setUser(response.data.user));
 
-    localStorage.setItem(
-      "token",
-      JSON.stringify(response.data.token)
-    );
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify(response.data.user)
-    );
+    
+    // user object should still be stringified
+    localStorage.setItem("user", JSON.stringify(response.data.user));
 
     toast.success("Login Successful");
 
-if (response.data.user.accountType === "Student") {
-  navigate("/dashboard");
-}
-else if (response.data.user.accountType === "Instructor") {
-  navigate("/dashboard/instructor");
-}
-else {
-  navigate("/");
-}
-
+    if (response.data.user.accountType === "Student") {
+      navigate("/dashboard");
+    } else if (response.data.user.accountType === "Instructor") {
+      navigate("/dashboard/instructor");
+    } else {
+      navigate("/");
+    }
   } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Login Failed"
-    );
+    toast.error(error?.response?.data?.message || "Login Failed");
   } finally {
     toast.dismiss(toastId);
   }
 };
 
 // FORGOT PASSWORD
-export const forgotPassword = async (
-  email
-) => {
-  const toastId = toast.loading(
-    "Sending Reset Link..."
-  );
+export const forgotPassword = async (email) => {
+  const toastId = toast.loading("Sending Reset Link...");
 
   try {
-    const response = await apiConnector(
-      "POST",
-      RESET_PASSWORD_TOKEN,
-      { email }
-    );
+    const response = await apiConnector("POST", RESET_PASSWORD_TOKEN, {
+      email,
+    });
 
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
 
-    toast.success(
-      "Password Reset Email Sent"
-    );
+    toast.success("Password Reset Email Sent");
   } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed To Send Reset Link"
-    );
+    toast.error(error?.response?.data?.message || "Failed To Send Reset Link");
   } finally {
     toast.dismiss(toastId);
   }
@@ -172,37 +114,26 @@ export const resetPassword = async (
   password,
   confirmPassword,
   token,
-  navigate
+  navigate,
 ) => {
-  const toastId = toast.loading(
-    "Resetting Password..."
-  );
+  const toastId = toast.loading("Resetting Password...");
 
   try {
-    const response = await apiConnector(
-      "POST",
-      RESET_PASSWORD,
-      {
-        password,
-        confirmPassword,
-        token,
-      }
-    );
+    const response = await apiConnector("POST", RESET_PASSWORD, {
+      password,
+      confirmPassword,
+      token,
+    });
 
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
 
-    toast.success(
-      "Password Reset Successful"
-    );
+    toast.success("Password Reset Successful");
 
     navigate("/login");
   } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Password Reset Failed"
-    );
+    toast.error(error?.response?.data?.message || "Password Reset Failed");
   } finally {
     toast.dismiss(toastId);
   }

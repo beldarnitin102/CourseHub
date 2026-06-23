@@ -151,23 +151,22 @@ exports.getCourseDetails = async (req, res) => {
   try {
     const { courseId } = req.body;
 
-    const getcourseDetails =
-      await Course.findById(courseId)
-        .populate({
-          path: "instructor",
-          populate: {
-            path: "additionalDetails",
-          },
-        })
-        .populate("category")
-        .populate("studentsEnrolled")
-        .populate("ratingAndReviews")
-        .populate({
-          path: "courseContent",
-          populate: {
-            path: "subSection",
-          },
-        });
+    const getcourseDetails = await Course.findById(courseId)
+      .populate({
+        path: "instructor",
+        populate: {
+          path: "additionalDetails",
+        },
+      })
+      .populate("category")
+      .populate("studentsEnrolled")
+      .populate("ratingAndReviews")
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      });
 
     if (!getcourseDetails) {
       return res.status(404).json({
@@ -249,6 +248,96 @@ exports.getInstructorDashboard = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch dashboard data",
+    });
+  }
+};
+
+exports.getInstructorCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .populate("courseContent")
+      .populate("category");
+
+    return res.status(200).json({
+      success: true,
+      data: course,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+    });
+  }
+};
+
+exports.updateCourse = async (req, res) => {
+  try {
+    const {
+      courseId,
+      courseName,
+      courseDescription,
+      price,
+      category,
+      whatYouWillLearn,
+      tags,
+    } = req.body;
+
+    const updateData = {
+      courseName,
+      courseDescription,
+      price,
+      category,
+      whatYouWillLearn,
+      tags,
+    };
+
+    if (req.files && req.files.thumbnailImage) {
+      const thumbnail = await uploadImageToCloudinary(
+        req.files.thumbnailImage,
+        process.env.FOLDER_NAME,
+      );
+
+      updateData.thumbnail = thumbnail.secure_url;
+    }
+
+    const updatedCourse = await Course.findByIdAndUpdate(courseId, updateData, {
+      new: true,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Course updated successfully",
+      data: updatedCourse,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update course",
+    });
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+
+    await Course.findByIdAndDelete(courseId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Course deleted successfully",
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete course",
     });
   }
 };

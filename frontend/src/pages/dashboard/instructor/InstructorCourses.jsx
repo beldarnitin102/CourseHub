@@ -1,104 +1,127 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../DashboardLayout";
-import { getInstructorDashboard } from "../../../services/operations/courseAPI";
+import { getInstructorCourses } from "../../../services/operations/courseAPI";
 
-export default function InstructorDashboard() {
-  const { token } = useSelector((state) => state.auth);
+export default function InstructorCourses() {
+const navigate = useNavigate();
 
-  const navigate = useNavigate();
-  
-  const [dashboardData, setDashboardData] = useState(null);
+const { token } = useSelector(
+(state) => state.auth
+);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+console.log("TOKEN =", token);
 
-  const fetchDashboardData = async () => {
-    const result = await getInstructorDashboard(token);
+const [courses, setCourses] =
+useState([]);
 
-    console.log(result);
+useEffect(() => {
+  if(token){
+    fetchCourses();
+  }
+}, [token]);
 
-    if (result?.data) {
-      setDashboardData(result.data);
-    }
-  };
+const fetchCourses = async () => {
+const result =
+await getInstructorCourses(
+token
+);
 
-  return (
-    <DashboardLayout>
-      <h1 className="mb-8 text-4xl font-bold">Instructor Dashboard</h1>
 
-      {!dashboardData ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {/* Stats */}
-          <div className="mb-8 grid gap-6 md:grid-cols-2">
-            <div className="rounded-3xl bg-white p-6 shadow-md">
-              <h2 className="text-lg font-semibold text-gray-500">
-                Total Courses
-              </h2>
+console.log(result);
 
-              <p className="mt-2 text-4xl font-bold">
-                {dashboardData.totalCourses}
-              </p>
-            </div>
-
-            <div className="rounded-3xl bg-white p-6 shadow-md">
-              <h2 className="text-lg font-semibold text-gray-500">
-                Total Students
-              </h2>
-
-              <p className="mt-2 text-4xl font-bold">
-                {dashboardData.totalStudents}
-              </p>
-            </div>
-          </div>
-
-          {/* Recent Courses */}
-          <div className="rounded-3xl bg-white p-6 shadow-md">
-            <h2 className="mb-6 text-2xl font-bold">Recent Courses</h2>
-
-            {dashboardData.recentCourses?.length > 0 ? (
-              <div className="grid gap-4">
-                {dashboardData.recentCourses.map((course) => (
-                  <div
-                    key={course._id}
-                    className="flex items-center gap-4 rounded-xl border p-4"
-                  >
-                    <img
-                      src={course.thumbnail}
-                      alt={course.courseName}
-                      className="h-20 w-28 rounded-lg object-cover"
-                    />
-
-                    <div>
-                      <h3 className="font-bold">{course.courseName}</h3>
-
-                      <p className="text-sm text-gray-500">
-                        {course.studentsEnrolled?.length} Students
-                      </p>
-
-                      <button
-                        onClick={() =>
-                          navigate(`/dashboard/edit-course/${course._id}`)
-                        }
-                        className="mt-4 rounded-xl bg-[#2563EB] px-5 py-3 text-white"
-                      >
-                        Edit Course
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No courses created yet.</p>
-            )}
-          </div>
-        </>
-      )}
-    </DashboardLayout>
+if (result?.data?.data) {
+  setCourses(
+    result.data.data
   );
+}
+
+
+};
+
+return ( <DashboardLayout> <h1 className="mb-8 text-4xl font-bold">
+My Courses </h1>
+
+
+  {courses.length === 0 ? (
+    <div className="rounded-3xl bg-white p-8 shadow-md">
+      No Courses Created Yet
+    </div>
+  ) : (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {courses.map((course) => (
+        <div
+          key={course._id}
+          className="rounded-3xl bg-white p-6 shadow-md"
+        >
+          <img
+            src={course.thumbnail}
+            alt={course.courseName}
+            className="mb-4 h-48 w-full rounded-2xl object-cover"
+          />
+
+          <h2 className="text-xl font-bold">
+            {course.courseName}
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+  {course.courseDescription}
+</p>
+
+          <p className="mt-2 text-gray-500">
+            {
+              course.studentsEnrolled
+                ?.length
+            } Students Enrolled
+          </p>
+
+          <div className="mt-4 flex gap-3">
+            <button
+              onClick={() =>
+                navigate(
+                  `/course/${course._id}`
+                )
+              }
+              className="rounded-xl bg-green-600 px-5 py-3 text-white"
+            >
+              View
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  `/dashboard/edit-course/${course._id}`
+                )
+              }
+              className="rounded-xl bg-[#2563EB] px-5 py-3 text-white"
+            >
+              Edit
+            </button>
+
+            <button
+  onClick={async () => {
+    const result =
+      await deleteCourse(
+        course._id,
+        token
+      );
+
+    if(result?.success){
+      fetchCourses();
+    }
+  }}
+  className="rounded-xl bg-red-600 px-5 py-3 text-white"
+>
+  Delete
+</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</DashboardLayout>
+
+);
 }

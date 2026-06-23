@@ -1,13 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function CourseSidebar({
   thumbnail,
   price,
 }) {
+
+  const { token } = useSelector(
+  (state) => state.auth
+);
+
   const navigate = useNavigate();
 
   // Later replace with Redux/Auth
-  const isLoggedIn = false;
+  const isLoggedIn = !!token;
 
   const handleBuyNow = () => {
     if (!isLoggedIn) {
