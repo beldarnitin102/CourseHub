@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiconnector";
 import axios from "axios";
+import { paymentEndpoints } from "../endpoints";
 
 const BASE_URL = "http://localhost:3000/api/v1";
 
@@ -249,6 +250,27 @@ export const deleteCourse = async (courseId, token) => {
       {
         Authorization: `Bearer ${token}`,
       },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const capturePayment = async (
+  courseId,
+  token
+) => {
+  try {
+    const response = await apiConnector(
+      "POST",
+      paymentEndpoints.CAPTURE_PAYMENT,
+      { courseId },
+      {
+        Authorization: `Bearer ${token}`,
+      }
     );
 
     return response.data;

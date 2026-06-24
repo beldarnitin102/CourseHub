@@ -77,6 +77,7 @@ export default function CourseDetails() {
                 course.thumbnail
               }
               price={course.price}
+              course={course}
             />
 
           </div>
