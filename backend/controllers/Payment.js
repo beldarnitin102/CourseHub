@@ -75,6 +75,9 @@ exports.capturePayment = async (req, res) => {
 
 exports.verifySignature = async (req, res) => {
 try {
+  console.log("VERIFY HIT");
+console.log(req.body);
+console.log(req.user);
 const {
 razorpay_order_id,
 razorpay_payment_id,
@@ -108,7 +111,7 @@ if (
     message: "Payment Verification Failed",
   });
 }
-
+console.log("Adding student to course");
 const enrolledCourse =
   await Course.findByIdAndUpdate(
     courseId,
@@ -119,7 +122,7 @@ const enrolledCourse =
     },
     { new: true }
   );
-
+console.log("Student added successfully");
 if (!enrolledCourse) {
   return res.status(404).json({
     success: false,

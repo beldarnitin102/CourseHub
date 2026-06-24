@@ -47,6 +47,18 @@ const options = {
   theme: {
     color: "#2563EB",
   },
+
+  handler: async function (response) {
+    console.log("PAYMENT SUCCESS");
+
+     console.log("RAZORPAY RESPONSE", response);
+    await verifyPayment(
+      response,
+      courseId,
+      token
+    );
+    console.log("VERIFY RESPONSE", verifyResponse);
+  },
 };
 
 const paymentObject =
@@ -66,4 +78,40 @@ toast.error(
 
 
 }
+};
+
+export const verifyPayment = async (
+  paymentData,
+  courseId,
+  token
+) => {
+  try {
+    console.log("verifyPayment called");
+
+    const response = await apiConnector(
+      "POST",
+      VERIFY_PAYMENT,
+      {
+        razorpay_order_id:
+          paymentData.razorpay_order_id,
+
+        razorpay_payment_id:
+          paymentData.razorpay_payment_id,
+
+        razorpay_signature:
+          paymentData.razorpay_signature,
+
+        courseId,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    console.log(response.data);
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
