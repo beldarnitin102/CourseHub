@@ -7,10 +7,8 @@ const {auth, isInstructor, isStudent} = require("../middleware/auth")
 router.post("/capturePayment", auth,isStudent,capturePayment)
 router.post(
   "/verifySignature",
-  (req,res,next)=>{
-    console.log("VERIFY ROUTE HIT");
-    next();
-  },
+  auth,
+  isStudent,
   verifySignature
 );
 

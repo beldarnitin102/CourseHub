@@ -52,7 +52,7 @@ const options = {
     console.log("PAYMENT SUCCESS");
 
      console.log("RAZORPAY RESPONSE", response);
-    await verifyPayment(
+    const verifyResponse = await verifyPayment(
       response,
       courseId,
       token
@@ -111,6 +111,8 @@ export const verifyPayment = async (
     console.log(response.data);
 
     return response.data;
+
+    
   } catch (error) {
     console.log(error);
   }
