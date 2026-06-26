@@ -1,28 +1,54 @@
-import SectionAccordion from "./SectionAccordion";
-
 export default function VideoSidebar({
   sections,
+  selectedLecture,
   setSelectedLecture,
 }) {
   return (
-    <div className="h-full overflow-y-auto bg-white">
+    <div className="h-screen overflow-y-auto p-4">
 
-      <div className="border-b p-5">
+      <h2 className="mb-5 text-2xl font-bold">
+        Course Content
+      </h2>
 
-        <h2 className="text-xl font-bold">
-          Course Content
-        </h2>
-
-      </div>
-
-      {sections.map((section) => (
-        <SectionAccordion
+      {sections?.map((section) => (
+        <div
           key={section._id}
-          section={section}
-          setSelectedLecture={setSelectedLecture}
-        />
-      ))}
+          className="mb-5"
+        >
+          <h3 className="mb-2 font-bold">
+            {section.sectionName}
+          </h3>
 
+          {section.subSection?.map(
+            (lecture) => (
+              <div
+                key={lecture._id}
+                onClick={() =>
+                  setSelectedLecture(
+                    lecture
+                  )
+                }
+                className={`mb-2 cursor-pointer rounded p-2 ${
+                  selectedLecture?._id ===
+                  lecture._id
+                    ? "bg-yellow-200"
+                    : "bg-gray-100"
+                }`}
+              >
+                <p className="font-medium">
+                  {lecture.title}
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  {
+                    lecture.timeDuration
+                  }
+                </p>
+              </div>
+            )
+          )}
+        </div>
+      ))}
     </div>
   );
 }

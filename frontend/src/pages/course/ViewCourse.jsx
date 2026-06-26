@@ -1,106 +1,142 @@
-import { useState } from "react";
-import VideoPlayer from "../../components/video/VideoPlayer";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
 import VideoSidebar from "../../components/video/VideoSidebar";
 import LectureContent from "../../components/video/LectureContent";
 
 export default function ViewCourse() {
-  const courseSections = [
-    {
-      _id: 1,
-      sectionName: "Getting Started",
+  const { courseId } = useParams();
 
-      subSections: [
-        {
-          _id: 11,
-          title: "Welcome",
-          description:
-            "Introduction to the course",
+  const [course, setCourse] = useState(null);
+  const [selectedLecture, setSelectedLecture] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-          videoUrl:
-            "https://www.w3schools.com/html/mov_bbb.mp4",
-        },
+  useEffect(() => {
+    fetchCourseDetails();
+  }, [courseId]);
 
-        {
-          _id: 12,
-          title: "Course Roadmap",
-          description:
-            "Understand the learning path",
+  const fetchCourseDetails = async () => {
+    try {
+      setLoading(true);
 
-          videoUrl:
-            "https://www.w3schools.com/html/mov_bbb.mp4",
-        },
-      ],
-    },
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/course/getCourseDetails/${courseId}`
+      );
 
-    {
-      _id: 2,
-      sectionName: "React Basics",
+      const courseData = response.data.data;
 
-      subSections: [
-        {
-          _id: 21,
-          title: "Components",
+      setCourse(courseData);
 
-          description:
-            "Understanding Components",
+      if (
+        courseData?.courseContent?.length &&
+        courseData.courseContent[0]?.subSection?.length
+      ) {
+        setSelectedLecture(courseData.courseContent[0].subSection[0]);
+      }
+    } catch (error) {
+      console.log(error);
+      setCourse(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          videoUrl:
-            "https://www.w3schools.com/html/mov_bbb.mp4",
-        },
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
 
-        {
-          _id: 22,
-          title: "Props",
-
-          description:
-            "Passing Data Between Components",
-
-          videoUrl:
-            "https://www.w3schools.com/html/mov_bbb.mp4",
-        },
-      ],
-    },
-  ];
-
-  const [selectedLecture, setSelectedLecture] =
-    useState(
-      courseSections[0].subSections[0]
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/i
     );
 
-  return (
-    <div className="min-h-screen bg-[#F3F4F6]">
+    if (!match) return "";
 
-      <div className="grid min-h-screen lg:grid-cols-[350px_1fr]">
+    return `https://www.youtube.com/embed/${match[1]}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center text-2xl font-semibold">
+        Loading Course...
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="flex h-screen items-center justify-center text-2xl font-semibold text-red-500">
+        Course Not Found
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="grid lg:grid-cols-[340px_1fr]">
 
         {/* Sidebar */}
 
-        <div className="border-r">
-
+        <div className="border-r bg-white h-screen overflow-y-auto">
           <VideoSidebar
-            sections={courseSections}
-            setSelectedLecture={
-              setSelectedLecture
-            }
+            sections={course.courseContent}
+            selectedLecture={selectedLecture}
+            setSelectedLecture={setSelectedLecture}
           />
-
         </div>
 
-        {/* Main Content */}
+        {/* Main */}
 
-        <div className="p-4 md:p-8">
+        <div className="p-6">
 
-          <VideoPlayer
-            selectedLecture={selectedLecture}
-          />
+          {selectedLecture && (
+            <>
+              {/* Video */}
 
-          <LectureContent
-            selectedLecture={selectedLecture}
-          />
+              <div className="overflow-hidden rounded-xl bg-black shadow-lg">
+
+                <div className="aspect-video">
+
+                  <iframe
+                    src={getEmbedUrl(selectedLecture.videoUrl)}
+                    title={selectedLecture.title}
+                    className="h-full w-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+
+                </div>
+
+              </div>
+
+              {/* Lecture Info */}
+
+              <div className="mt-6 rounded-xl bg-white p-6 shadow">
+
+                <h1 className="text-3xl font-bold">
+                  {selectedLecture.title}
+                </h1>
+
+                <p className="mt-2 text-sm text-gray-500">
+                  Duration : {selectedLecture.timeDuration}
+                </p>
+
+                <hr className="my-5" />
+
+                <p className="leading-7 text-gray-700">
+                  {selectedLecture.description}
+                </p>
+
+              </div>
+
+              <LectureContent
+                selectedLecture={selectedLecture}
+              />
+            </>
+          )}
 
         </div>
-
       </div>
-
     </div>
   );
 }

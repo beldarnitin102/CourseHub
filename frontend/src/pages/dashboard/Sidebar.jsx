@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/slices/authSlice";
 import { setUser } from "../../redux/slices/profileSlice";
 
+
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,6 +81,11 @@ export default function Sidebar() {
       path: "/dashboard/settings",
       icon: "⚙️",
     },
+    {
+  name: "AI Course Generator",
+  path: "/dashboard/ai-course-generator",
+  icon: "⚙️",
+}
   ];
 
   const links = accountType === "Instructor" ? instructorLinks : studentLinks;

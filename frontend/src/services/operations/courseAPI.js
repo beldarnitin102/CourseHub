@@ -105,20 +105,15 @@ export const createSubSection = async (data, token) => {
 };
 
 // ================= COURSE DETAILS =================
-
 export const getCourseDetails = async (courseId) => {
   try {
     const response = await apiConnector(
-      "POST",
-      `${BASE_URL}/course/getCourseDetails`,
-      {
-        courseId,
-      },
+      "GET",
+      `${BASE_URL}/course/getCourseDetails?courseId=${courseId}`
     );
-
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching course details:", error);
     return null;
   }
 };

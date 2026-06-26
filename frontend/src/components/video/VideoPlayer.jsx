@@ -1,25 +1,21 @@
-export default function VideoPlayer({
-  selectedLecture,
-}) {
+export default function VideoPlayer({ selectedLecture }) {
+  if (!selectedLecture) return <h2>No lecture selected</h2>;
+  console.log("Selected Lecture:", selectedLecture);
+console.log("Video URL:", selectedLecture?.videoUrl);
+
   return (
-    <div className="overflow-hidden rounded-3xl bg-black shadow-lg">
+    <div>
 
-      <div className="aspect-video flex items-center justify-center text-white">
+      
+      <h3>{selectedLecture.title}</h3>
 
-        {selectedLecture?.videoUrl ? (
-          <video
-            controls
-            className="h-full w-full"
-            src={selectedLecture.videoUrl}
-          />
-        ) : (
-          <h2 className="text-2xl">
-            Select a Lecture
-          </h2>
-        )}
+      <p>{selectedLecture.videoUrl}</p>
 
-      </div>
-
+      <iframe
+        width="800"
+        height="500"
+        src={selectedLecture.videoUrl}
+      />
     </div>
   );
 }
