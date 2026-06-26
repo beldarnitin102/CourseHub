@@ -1,11 +1,6 @@
 const axios = require("axios");
 require("dotenv").config();
 
-/**
- * Extracts the playlist ID from a YouTube playlist URL.
- * Supports both full URLs (youtube.com/playlist?list=...) and
- * watch URLs with list param (youtube.com/watch?v=...&list=...).
- */
 exports.extractPlaylistId = (playlistUrl) => {
   try {
     const url = new URL(playlistUrl);
@@ -15,15 +10,6 @@ exports.extractPlaylistId = (playlistUrl) => {
   }
 };
 
-/**
- * Converts an ISO 8601 duration string (e.g. "PT1H2M34S") to a
- * human-readable "HH:MM:SS" or "MM:SS" string.
- *
- * Examples:
- *   "PT34S"       → "0:34"
- *   "PT5M12S"     → "5:12"
- *   "PT1H2M34S"   → "1:02:34"
- */
 const parseDuration = (iso8601) => {
   if (!iso8601) return "0:00";
 
@@ -40,11 +26,6 @@ const parseDuration = (iso8601) => {
   return hours > 0 ? `${hours}:${mm}:${ss}` : `${mm}:${ss}`;
 };
 
-/**
- * Given an array of videoIds, fetches their durations from the
- * YouTube Videos API (contentDetails) in batches of 50.
- * Returns a Map<videoId, durationString>.
- */
 const fetchVideoDurations = async (videoIds) => {
   const durationMap = new Map();
 
@@ -60,26 +41,17 @@ const fetchVideoDurations = async (videoIds) => {
           id: batch.join(","),
           key: process.env.YOUTUBE_API_KEY,
         },
-      }
+      },
     );
 
     for (const item of response.data.items || []) {
-      durationMap.set(
-        item.id,
-        parseDuration(item.contentDetails?.duration)
-      );
+      durationMap.set(item.id, parseDuration(item.contentDetails?.duration));
     }
   }
 
   return durationMap;
 };
 
-/**
- * Fetches ALL videos from a YouTube playlist, handling pagination
- * via nextPageToken. Also fetches each video's real duration via a
- * second API call to the Videos endpoint. Returns an array of video
- * metadata objects.
- */
 exports.getPlaylistVideos = async (playlistId) => {
   try {
     const allVideos = [];
@@ -100,7 +72,7 @@ exports.getPlaylistVideos = async (playlistId) => {
 
       const response = await axios.get(
         "https://www.googleapis.com/youtube/v3/playlistItems",
-        { params }
+        { params },
       );
 
       const items = response.data.items || [];
@@ -111,7 +83,7 @@ exports.getPlaylistVideos = async (playlistId) => {
           (item) =>
             item.snippet.title !== "Deleted video" &&
             item.snippet.title !== "Private video" &&
-            item.snippet.resourceId?.videoId
+            item.snippet.resourceId?.videoId,
         )
         .map((item) => ({
           title: item.snippet.title,
@@ -148,7 +120,7 @@ exports.getPlaylistVideos = async (playlistId) => {
   } catch (error) {
     console.error(
       "[youtubeService] Error fetching playlist videos:",
-      error?.response?.data || error.message
+      error?.response?.data || error.message,
     );
     throw error;
   }

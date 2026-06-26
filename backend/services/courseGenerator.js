@@ -12,29 +12,22 @@ const SubSection = require("../models/SubSection");
  * @param {string} categoryId    - MongoDB ObjectId of the target category
  * @returns {Object}             - The saved Mongoose Course document
  */
-exports.createCourseFromAI = async (aiData, videos, instructorId, categoryId) => {
+exports.createCourseFromAI = async (
+  aiData,
+  videos,
+  instructorId,
+  categoryId,
+) => {
   try {
-    // ----------------------------------------------------------------
-    // Build a fast lookup map: videoId -> video  (used to match
-    // AI-assigned lectures back to the real YouTube metadata)
-    // ----------------------------------------------------------------
     const videoMap = {};
     videos.forEach((video) => {
       videoMap[video.videoId] = video;
     });
 
-    // ----------------------------------------------------------------
-    // Pick the best available thumbnail from the playlist videos.
-    // Use the first video's thumbnail; fall back to a placeholder if
-    // none of the videos have a thumbnail URL.
-    // ----------------------------------------------------------------
     const courseThumbnail =
       videos.find((v) => v.thumbnail)?.thumbnail ||
       "https://placehold.co/600x400/1a1a2e/ffffff?text=Course+Thumbnail";
 
-    // ----------------------------------------------------------------
-    // Create the top-level Course document
-    // ----------------------------------------------------------------
     const course = await Course.create({
       courseName: aiData.courseName,
       courseDescirption: aiData.courseDescription, // matches model field (note: model has typo)
@@ -48,9 +41,6 @@ exports.createCourseFromAI = async (aiData, videos, instructorId, categoryId) =>
       price: 0, // AI-generated courses are free by default
     });
 
-    // ----------------------------------------------------------------
-    // Create Sections and nested SubSections
-    // ----------------------------------------------------------------
     const sectionIds = [];
 
     for (const section of aiData.sections) {
@@ -68,17 +58,12 @@ exports.createCourseFromAI = async (aiData, videos, instructorId, categoryId) =>
           videos.find((v) => v.videoUrl === lecture.videoUrl) ||
           null;
 
-        // Use AI-generated description if present; otherwise use the
-        // video's own YouTube description (truncated to 500 chars) or
-        // a sensible default.
         const lectureDescription =
           lecture.description ||
           (matchedVideo?.description
             ? matchedVideo.description.slice(0, 500)
             : `Lecture: ${lecture.title}`);
 
-        // Prefer the real YouTube URL from our fetched data to avoid
-        // any URL manipulation by the AI model.
         const lectureVideoUrl =
           matchedVideo?.videoUrl || lecture.videoUrl || "";
 
@@ -97,9 +82,6 @@ exports.createCourseFromAI = async (aiData, videos, instructorId, categoryId) =>
       sectionIds.push(createdSection._id);
     }
 
-    // ----------------------------------------------------------------
-    // Attach all sections to the course and persist
-    // ----------------------------------------------------------------
     course.courseContent = sectionIds;
     await course.save();
 

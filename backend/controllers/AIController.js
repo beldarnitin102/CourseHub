@@ -1,23 +1,10 @@
-const { extractPlaylistId, getPlaylistVideos } = require("../services/youtubeService");
+const {
+  extractPlaylistId,
+  getPlaylistVideos,
+} = require("../services/youtubeService");
 const groq = require("../config/groq");
 const { createCourseFromAI } = require("../services/courseGenerator");
 
-/**
- * POST /api/v1/ai/generate-course
- *
- * Body:
- *  - playlistUrl  {string}  Full YouTube playlist URL
- *  - categoryId   {string}  MongoDB ObjectId of the target category
- *
- * Auth: Bearer token (instructor role required)
- *
- * Flow:
- *  1. Extract playlist ID from the URL
- *  2. Fetch all videos (handles pagination) via YouTube Data API v3
- *  3. Send video list to Groq LLM to generate structured course data
- *  4. Persist course, sections, and sub-sections to MongoDB
- *  5. Return the fully-populated course document
- */
 exports.generateCourseFromPlaylist = async (req, res) => {
   try {
     const { playlistUrl, categoryId } = req.body;
@@ -41,7 +28,8 @@ exports.generateCourseFromPlaylist = async (req, res) => {
     if (!playlistId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid YouTube playlist URL. Make sure it contains a 'list' parameter.",
+        message:
+          "Invalid YouTube playlist URL. Make sure it contains a 'list' parameter.",
       });
     }
 
@@ -51,15 +39,11 @@ exports.generateCourseFromPlaylist = async (req, res) => {
     if (!videos || videos.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No public videos found in this playlist. The playlist may be empty or private.",
+        message:
+          "No public videos found in this playlist. The playlist may be empty or private.",
       });
     }
 
-    console.log(`[AIController] Fetched ${videos.length} videos from playlist ${playlistId}`);
-
-    // Build a compact representation for the AI prompt.
-    // We pass videoId (not just URL) so the AI can reference it back
-    // in each lecture, letting courseGenerator match accurately.
     const playlistData = videos.map((video) => ({
       videoId: video.videoId,
       title: video.title,
@@ -147,23 +131,24 @@ Rules:
     }
 
     // Validate that the AI returned the required fields
-    if (!aiResponse.courseName || !aiResponse.sections || !Array.isArray(aiResponse.sections)) {
+    if (
+      !aiResponse.courseName ||
+      !aiResponse.sections ||
+      !Array.isArray(aiResponse.sections)
+    ) {
       return res.status(500).json({
         success: false,
-        message: "AI response is missing required fields (courseName or sections).",
+        message:
+          "AI response is missing required fields (courseName or sections).",
       });
     }
-
-    console.log(
-      `[AIController] AI generated course: "${aiResponse.courseName}" with ${aiResponse.sections.length} sections`
-    );
 
     // ── 5. Persist course to DB ─────────────────────────────────────
     const createdCourse = await createCourseFromAI(
       aiResponse,
       videos,
       req.user.id,
-      categoryId
+      categoryId,
     );
 
     return res.status(200).json({
@@ -175,7 +160,9 @@ Rules:
     console.error("[AIController] Error generating course:", error);
     return res.status(500).json({
       success: false,
-      message: error.message || "An unexpected error occurred while generating the course.",
+      message:
+        error.message ||
+        "An unexpected error occurred while generating the course.",
     });
   }
 };

@@ -1,16 +1,24 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-import VideoSidebar from "../../components/video/VideoSidebar";
-import LectureContent from "../../components/video/LectureContent";
+import CourseHeader from "./CourseHeader";
+import VideoPlayer from "./VideoPlayer";
+import VideoSidebar from "./VideoSidebar";
+import LectureContent from "./LectureContent";
+import LectureNavigation from "./LectureNavigation";
+import MobileSidebar from "./MobileSidebar";
 
 export default function ViewCourse() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
 
   const [course, setCourse] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // temporary state
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     fetchCourseDetails();
@@ -21,7 +29,7 @@ export default function ViewCourse() {
       setLoading(true);
 
       const response = await axios.get(
-        `http://localhost:3000/api/v1/course/getCourseDetails/${courseId}`
+        `http://localhost:3000/api/v1/course/getCourseDetails/${courseId}`,
       );
 
       const courseData = response.data.data;
@@ -29,113 +37,127 @@ export default function ViewCourse() {
       setCourse(courseData);
 
       if (
-        courseData?.courseContent?.length &&
-        courseData.courseContent[0]?.subSection?.length
+        courseData?.courseContent?.length > 0 &&
+        courseData.courseContent[0]?.subSection?.length > 0
       ) {
         setSelectedLecture(courseData.courseContent[0].subSection[0]);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       setCourse(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const getEmbedUrl = (url) => {
-    if (!url) return "";
+  const totalLectures = useMemo(() => {
+    if (!course) return 0;
 
-    const match = url.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/i
+    return course.courseContent.reduce(
+      (acc, sec) => acc + (sec.subSection?.length || 0),
+      0,
     );
+  }, [course]);
 
-    if (!match) return "";
+  const allLectures =
+    course?.courseContent?.flatMap((section) => section.subSection) || [];
 
-    return `https://www.youtube.com/embed/${match[1]}`;
+  const currentIndex = allLectures.findIndex(
+    (lecture) => lecture._id === selectedLecture?._id,
+  );
+
+  const previousLecture =
+    currentIndex > 0 ? allLectures[currentIndex - 1] : null;
+
+  const nextLecture =
+    currentIndex < allLectures.length - 1
+      ? allLectures[currentIndex + 1]
+      : null;
+
+  const markCompleted = () => {
+    setCompleted(true);
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="flex h-screen items-center justify-center text-2xl font-semibold">
-        Loading Course...
+      <div className="flex h-screen items-center justify-center text-2xl">
+        Loading...
       </div>
     );
-  }
 
-  if (!course) {
+  if (!course)
     return (
-      <div className="flex h-screen items-center justify-center text-2xl font-semibold text-red-500">
+      <div className="flex h-screen items-center justify-center text-2xl">
         Course Not Found
       </div>
     );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="grid lg:grid-cols-[340px_1fr]">
-
+    <div className="min-h-screen bg-slate-100">
+      <div className="grid lg:grid-cols-[330px_1fr]">
         {/* Sidebar */}
 
-        <div className="border-r bg-white h-screen overflow-y-auto">
+        <aside className="sticky top-0 hidden h-screen overflow-y-auto border-r bg-white lg:block">
           <VideoSidebar
             sections={course.courseContent}
             selectedLecture={selectedLecture}
-            setSelectedLecture={setSelectedLecture}
+            setSelectedLecture={(lecture) => {
+              setSelectedLecture(lecture);
+              setCompleted(false);
+            }}
           />
-        </div>
+        </aside>
 
         {/* Main */}
 
-        <div className="p-6">
+        <MobileSidebar
+          sections={course.courseContent}
+          selectedLecture={selectedLecture}
+          setSelectedLecture={(lecture) => {
+            setCompleted(false);
+            setSelectedLecture(lecture);
+          }}
+        />
 
-          {selectedLecture && (
-            <>
-              {/* Video */}
+        <main className="space-y-6 p-6">
+          {/* Back */}
 
-              <div className="overflow-hidden rounded-xl bg-black shadow-lg">
+          <button
+            onClick={() => navigate(-1)}
+            className="rounded-lg border bg-white px-4 py-2 font-medium shadow hover:bg-gray-100"
+          >
+            ← Back
+          </button>
 
-                <div className="aspect-video">
+          {/* Header */}
 
-                  <iframe
-                    src={getEmbedUrl(selectedLecture.videoUrl)}
-                    title={selectedLecture.title}
-                    className="h-full w-full"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+          <CourseHeader course={course} totalLectures={totalLectures} />
 
-                </div>
+          {/* Video */}
 
-              </div>
+          <VideoPlayer selectedLecture={selectedLecture} />
 
-              {/* Lecture Info */}
+          {/* Lecture */}
 
-              <div className="mt-6 rounded-xl bg-white p-6 shadow">
+          <LectureContent
+            selectedLecture={selectedLecture}
+            completed={completed}
+            markCompleted={markCompleted}
+          />
 
-                <h1 className="text-3xl font-bold">
-                  {selectedLecture.title}
-                </h1>
+          {/* Navigation */}
 
-                <p className="mt-2 text-sm text-gray-500">
-                  Duration : {selectedLecture.timeDuration}
-                </p>
-
-                <hr className="my-5" />
-
-                <p className="leading-7 text-gray-700">
-                  {selectedLecture.description}
-                </p>
-
-              </div>
-
-              <LectureContent
-                selectedLecture={selectedLecture}
-              />
-            </>
-          )}
-
-        </div>
+          <LectureNavigation
+            previousLecture={previousLecture}
+            nextLecture={nextLecture}
+            setSelectedLecture={(lecture) => {
+              setCompleted(false);
+              setSelectedLecture(lecture);
+            }}
+            markCompleted={markCompleted}
+            completed={completed}
+          />
+        </main>
       </div>
     </div>
   );
