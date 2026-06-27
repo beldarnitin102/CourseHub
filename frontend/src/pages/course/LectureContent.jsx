@@ -6,10 +6,14 @@ import {
 } from "lucide-react";
 
 import { useSelector } from "react-redux";
-import { saveNotes } from "../../services/operations/courseProgressAPI";
+import {
+  saveLectureNote,
+  getLectureNote,
+} from "../../services/operations/lectureAPI";
 
 export default function LectureContent({
   selectedLecture,
+   courseId,
   completed,
   markCompleted,
 }) {
@@ -23,25 +27,35 @@ const { token } = useSelector(
 );
 
 useEffect(() => {
-  if (!noteKey) return;
+  if (!selectedLecture || !courseId || !token) return;
 
-  const saved =
-    localStorage.getItem(
-      `lecture-note-${noteKey}`
+  const fetchNote = async () => {
+    const response = await getLectureNote(
+      courseId,
+      selectedLecture._id,
+      token
     );
 
-  setNotes(saved || "");
-}, [noteKey]);
+    if (response?.success) {
+      setNotes(response.data?.note || "");
+    }
+  };
+
+  fetchNote();
+}, [selectedLecture, courseId, token]);
 
   if (!selectedLecture) return null;
 
  const handleSaveNotes = async () => {
 
-   const response = await saveNotes(
-      selectedLecture._id,
-      notes,
-      token
-   );
+   const response = await saveLectureNote(
+    {
+        courseId,
+        lectureId: selectedLecture._id,
+        note: notes,
+    },
+    token
+);
 
    if(response?.success){
       alert("Notes Saved");

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import DashboardLayout from "../../pages/dashboard/DashboardLayout";
 
-import { getEnrolledCourses } from "../../services/operations/profileAPI";
+import { getUserEnrolledCourses } from "../../services/operations/profileAPI";
 
 export default function MyCourses() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function MyCourses() {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const result = await getEnrolledCourses(token);
+      const result = await getUserEnrolledCourses(token);
 
       setCourses(result);
       setLoading(false);

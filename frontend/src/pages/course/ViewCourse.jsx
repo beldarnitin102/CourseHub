@@ -100,10 +100,10 @@ export default function ViewCourse() {
       : null;
 
   const handleVideoEnd = () => {
-  if (nextLecture) {
-    setSelectedLecture(nextLecture);
-  }
-};
+    if (nextLecture) {
+      setSelectedLecture(nextLecture);
+    }
+  };
 
   const markCompleted = async () => {
     if (completedLectures.includes(selectedLecture._id)) return;
@@ -172,16 +172,24 @@ export default function ViewCourse() {
 
           {/* Header */}
 
-          <CourseHeader course={course} totalLectures={totalLectures}  completedLectures={completedLectures.length} />
+          <CourseHeader
+            course={course}
+            totalLectures={totalLectures}
+            completedLectures={completedLectures.length}
+          />
 
           {/* Video */}
 
-          <VideoPlayer selectedLecture={selectedLecture} onVideoEnd={handleVideoEnd}/>
+          <VideoPlayer
+            selectedLecture={selectedLecture}
+            onVideoEnd={handleVideoEnd}
+          />
 
           {/* Lecture */}
 
           <LectureContent
             selectedLecture={selectedLecture}
+            courseId={courseId}
             completed={completedLectures.includes(selectedLecture?._id)}
             markCompleted={markCompleted}
           />

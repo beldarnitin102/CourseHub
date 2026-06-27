@@ -1,24 +1,19 @@
 import { apiConnector } from "../apiconnector";
+import {profileEndpoints} from "../endpoints"
 
-const BASE_URL =
-  "http://localhost:3000/api/v1/profile";
-
-export const getEnrolledCourses = async (
-  token
-) => {
+export const getUserEnrolledCourses = async (token) => {
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/getEnrolledCourses`,
+      profileEndpoints.GET_ENROLLED_COURSES,
       null,
       {
         Authorization: `Bearer ${token}`,
       }
     );
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.log(error);
-    return [];
   }
 };

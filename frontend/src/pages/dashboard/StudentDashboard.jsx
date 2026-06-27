@@ -1,145 +1,221 @@
-import DashboardLayout from "../dashboard/DashboardLayout";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import DashboardLayout from "../dashboard/DashboardLayout";
+import CourseProgress from "../../pages/course/CourseProgress";
+
+import { getUserEnrolledCourses } from "../../services/operations/profileAPI";
+import { getCourseProgress } from "../../services/operations/courseProgressAPI";
+
 export default function StudentDashboard() {
+  const navigate = useNavigate();
+
   const { user } = useSelector((state) => state.profile);
+  const { token } = useSelector((state) => state.auth);
+
+  const [courses, setCourses] = useState([]);
+  const [progressData, setProgressData] = useState({});
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    const enrolledCourses = await getUserEnrolledCourses(token);
+
+    if (!enrolledCourses?.success) return;
+
+    setCourses(enrolledCourses.data);
+
+    const progressMap = {};
+
+    for (const course of enrolledCourses.data) {
+      const progress = await getCourseProgress(course._id, token);
+
+      progressMap[course._id] = progress?.data || {};
+    }
+
+    setProgressData(progressMap);
+  };
+
+  const totalCourses = courses.length;
+
+  const completedLectures = useMemo(() => {
+    return Object.values(progressData).reduce((acc, item) => {
+      return acc + (item.completedVideos?.length || 0);
+    }, 0);
+  }, [progressData]);
+
+  const totalLectures = useMemo(() => {
+    return courses.reduce((acc, course) => {
+      const lectures =
+        course.courseContent?.reduce(
+          (sum, sec) => sum + sec.subSection.length,
+          0
+        ) || 0;
+
+      return acc + lectures;
+    }, 0);
+  }, [courses]);
+
+  const overallProgress =
+    totalLectures > 0
+      ? Math.round((completedLectures / totalLectures) * 100)
+      : 0;
 
   return (
     <DashboardLayout>
-      {/* Welcome Banner */}
-      <div className="mb-8 overflow-hidden rounded-3xl bg-gradient-to-r from-[#2563EB] to-indigo-600 p-8 text-white shadow-xl">
+
+      {/* Banner */}
+
+      <div className="mb-8 rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white shadow-xl">
+
         <h1 className="text-4xl font-bold">
-          Welcome Back, {user?.firstName || "Student"} 👋
+          Welcome Back, {user?.firstName}
         </h1>
 
-        <p className="mt-3 text-lg text-blue-100">
-          Continue your learning journey and achieve your goals.
+        <p className="mt-3 text-blue-100">
+          Continue your learning journey.
         </p>
 
-        <button className="mt-6 rounded-xl bg-white px-6 py-3 font-semibold text-[#2563EB] transition hover:scale-105">
-          Continue Learning
-        </button>
       </div>
 
-      {/* Stats Section */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-3xl bg-white p-6 shadow-lg transition hover:-translate-y-1">
-          <p className="text-4xl">📚</p>
-          <h3 className="mt-4 text-gray-500">
+      {/* Stats */}
+
+      <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+        <div className="rounded-2xl bg-white p-6 shadow">
+
+          <h3 className="text-gray-500">
             Enrolled Courses
           </h3>
-          <p className="mt-2 text-4xl font-bold text-[#111827]">
-            12
+
+          <p className="mt-2 text-4xl font-bold">
+            {totalCourses}
           </p>
+
         </div>
 
-        <div className="rounded-3xl bg-white p-6 shadow-lg transition hover:-translate-y-1">
-          <p className="text-4xl">🏆</p>
-          <h3 className="mt-4 text-gray-500">
-            Certificates
+        <div className="rounded-2xl bg-white p-6 shadow">
+
+          <h3 className="text-gray-500">
+            Completed Lectures
           </h3>
-          <p className="mt-2 text-4xl font-bold text-[#111827]">
-            5
+
+          <p className="mt-2 text-4xl font-bold">
+            {completedLectures}
           </p>
+
         </div>
 
-        <div className="rounded-3xl bg-white p-6 shadow-lg transition hover:-translate-y-1">
-          <p className="text-4xl">✅</p>
-          <h3 className="mt-4 text-gray-500">
-            Completed Lessons
+        <div className="rounded-2xl bg-white p-6 shadow">
+
+          <h3 className="text-gray-500">
+            Total Lectures
           </h3>
-          <p className="mt-2 text-4xl font-bold text-[#111827]">
-            48
+
+          <p className="mt-2 text-4xl font-bold">
+            {totalLectures}
           </p>
+
         </div>
 
-        <div className="rounded-3xl bg-white p-6 shadow-lg transition hover:-translate-y-1">
-          <p className="text-4xl">📈</p>
-          <h3 className="mt-4 text-gray-500">
-            Progress
+        <div className="rounded-2xl bg-white p-6 shadow">
+
+          <h3 className="text-gray-500">
+            Overall Progress
           </h3>
-          <p className="mt-2 text-4xl font-bold text-[#111827]">
-            72%
+
+          <p className="mt-2 text-4xl font-bold">
+            {overallProgress}%
           </p>
+
         </div>
+
       </div>
 
       {/* Continue Learning */}
-      <div className="mt-10">
-        <h2 className="mb-5 text-2xl font-bold text-[#111827]">
-          Continue Learning
-        </h2>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {[1, 2].map((course) => (
+      <h2 className="mb-5 text-2xl font-bold">
+        Continue Learning
+      </h2>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+
+        {courses.map((course) => {
+
+          const completed =
+            progressData[course._id]?.completedVideos?.length || 0;
+
+          const lectures =
+            course.courseContent?.reduce(
+              (sum, sec) => sum + sec.subSection.length,
+              0
+            ) || 0;
+
+          const progress =
+            lectures > 0
+              ? Math.round((completed / lectures) * 100)
+              : 0;
+
+          return (
             <div
-              key={course}
-              className="rounded-3xl bg-white p-6 shadow-lg"
+              key={course._id}
+              className="rounded-3xl bg-white p-6 shadow"
             >
-              <div className="mb-4 h-48 rounded-2xl bg-gradient-to-r from-blue-100 to-indigo-100"></div>
+
+              <img
+                src={course.thumbnail}
+                alt={course.courseName}
+                className="mb-4 h-48 w-full rounded-xl object-cover"
+              />
 
               <h3 className="text-xl font-bold">
-                MERN Stack Development
+                {course.courseName}
               </h3>
 
               <p className="mt-2 text-gray-500">
-                72% Completed
+                {progress}% Completed
               </p>
 
               <div className="mt-4 h-3 rounded-full bg-gray-200">
-                <div className="h-3 w-[72%] rounded-full bg-[#2563EB]"></div>
+
+                <div
+                  className="h-3 rounded-full bg-blue-600"
+                  style={{
+                    width: `${progress}%`,
+                  }}
+                />
+
               </div>
 
-              <button className="mt-5 rounded-xl bg-[#2563EB] px-5 py-3 text-white transition hover:bg-blue-700">
+              <button
+                onClick={() =>
+                  navigate(`/view-course/${course._id}`)
+                }
+                className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-white"
+              >
                 Continue Learning
               </button>
+
             </div>
-          ))}
-        </div>
+          );
+        })}
+
       </div>
 
-      {/* Bottom Section */}
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        {/* Recent Activity */}
-        <div className="rounded-3xl bg-white p-6 shadow-lg">
-          <h2 className="mb-5 text-2xl font-bold">
-            Recent Activity
-          </h2>
+      {/* Overall Progress */}
 
-          <div className="space-y-4">
-            <div className="rounded-xl bg-gray-50 p-4">
-              ✅ Completed React Hooks Module
-            </div>
+      <div className="mt-10">
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              🎯 Finished Node.js Assignment
-            </div>
+        <CourseProgress
+          totalLectures={totalLectures}
+          completedLectures={completedLectures}
+        />
 
-            <div className="rounded-xl bg-gray-50 p-4">
-              📚 Enrolled in AI Fundamentals
-            </div>
-          </div>
-        </div>
-
-        {/* Weekly Goal */}
-        <div className="rounded-3xl bg-white p-6 shadow-lg">
-          <h2 className="mb-5 text-2xl font-bold">
-            Weekly Goal
-          </h2>
-
-          <p className="mb-4 text-gray-600">
-            5 of 10 learning hours completed
-          </p>
-
-          <div className="h-4 rounded-full bg-gray-200">
-            <div className="h-4 w-1/2 rounded-full bg-green-500"></div>
-          </div>
-
-          <p className="mt-4 text-sm text-gray-500">
-            Keep going! You're halfway there 🚀
-          </p>
-        </div>
       </div>
+
     </DashboardLayout>
   );
 }

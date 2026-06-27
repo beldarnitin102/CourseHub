@@ -28,5 +28,17 @@ export const paymentEndpoints = {
 };
 
 export const courseProgressEndpoints = {
-  SAVE_NOTES: `${BASE_URL}/ `
-}
+  MARK_COMPLETE: `${BASE_URL}/courseProgress/mark-complete`,
+  GET_PROGRESS: `${BASE_URL}/courseProgress`,
+  UPDATE_LAST_VIEWED: `${BASE_URL}/courseProgress/update-last-viewed`,
+};
+
+export const lectureNoteEndpoints = {
+  SAVE_NOTE: `${BASE_URL}/lecture/save-note`,
+  GET_NOTE: `${BASE_URL}/lecture/get-note`,
+};
+
+export const profileEndpoints = {
+  GET_USER_DETAILS: `${BASE_URL}/profile/getUserDetails`,
+  GET_ENROLLED_COURSES: `${BASE_URL}/profile/getEnrolledCourses`,
+};

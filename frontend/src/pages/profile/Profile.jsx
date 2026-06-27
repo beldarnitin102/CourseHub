@@ -1,6 +1,8 @@
 import DashboardLayout from "../dashboard/DashboardLayout";
 
 export default function Profile() {
+
+  
   return (
     <DashboardLayout>
 

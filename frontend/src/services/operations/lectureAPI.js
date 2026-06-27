@@ -1,7 +1,10 @@
 import { apiConnector } from "../apiconnector";
+import { lectureNoteEndpoints } from "../endpoints";
 
-const BASE_URL =
-  "http://localhost:3000/api/v1/lecture";
+const {
+  SAVE_NOTE,
+  GET_NOTE,
+} = lectureNoteEndpoints;
 
 export const saveLectureNote = async (
   data,
@@ -10,7 +13,7 @@ export const saveLectureNote = async (
   try {
     const response = await apiConnector(
       "POST",
-      `${BASE_URL}/save-note`,
+      SAVE_NOTE,
       data,
       {
         Authorization: `Bearer ${token}`,
@@ -31,7 +34,7 @@ export const getLectureNote = async (
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/get-note/${courseId}/${lectureId}`,
+      `${GET_NOTE}/${courseId}/${lectureId}`,
       null,
       {
         Authorization: `Bearer ${token}`,

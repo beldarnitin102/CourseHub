@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiconnector";
 import axios from "axios";
-import { paymentEndpoints } from "../endpoints";
+import { paymentEndpoints, courseEndpoints  } from "../endpoints";
 
 const BASE_URL = "http://localhost:3000/api/v1";
 
@@ -108,11 +108,12 @@ export const getCourseDetails = async (courseId) => {
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/course/getCourseDetails?courseId=${courseId}`,
+      `${courseEndpoints.GET_COURSE_DETAILS}/${courseId}`
     );
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching course details:", error);
+    console.log("Error fetching course details:", error);
     return null;
   }
 };
