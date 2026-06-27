@@ -26,3 +26,7 @@ export const paymentEndpoints = {
   CAPTURE_PAYMENT: `${BASE_URL}/payment/capturePayment`,
   VERIFY_PAYMENT: `${BASE_URL}/payment/verifySignature`,
 };
+
+export const courseProgressEndpoints = {
+  SAVE_NOTES: `${BASE_URL}/ `
+}

@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useSelector } from "react-redux";
+
+import {
+  getCourseProgress,
+  markLectureComplete,
+  updateLastViewedLecture,
+} from "../../services/operations/courseProgressAPI";
 
 import CourseHeader from "./CourseHeader";
 import VideoPlayer from "./VideoPlayer";
@@ -11,14 +18,16 @@ import MobileSidebar from "./MobileSidebar";
 
 export default function ViewCourse() {
   const { courseId } = useParams();
+
   const navigate = useNavigate();
+  const { token } = useSelector((state) => state.auth);
 
   const [course, setCourse] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // temporary state
-  const [completed, setCompleted] = useState(false);
+  const [completedLectures, setCompletedLectures] = useState([]);
 
   useEffect(() => {
     fetchCourseDetails();
@@ -36,9 +45,25 @@ export default function ViewCourse() {
 
       setCourse(courseData);
 
-      if (
-        courseData?.courseContent?.length > 0 &&
-        courseData.courseContent[0]?.subSection?.length > 0
+      const progress = await getCourseProgress(courseId, token);
+
+      if (progress?.data?.completedVideos) {
+        setCompletedLectures(
+          progress.data.completedVideos.map((video) => video._id),
+        );
+      }
+
+      if (progress?.data?.lastViewedVideo) {
+        const lecture = courseData.courseContent
+          .flatMap((section) => section.subSection)
+          .find((item) => item._id === progress.data.lastViewedVideo);
+
+        if (lecture) {
+          setSelectedLecture(lecture);
+        }
+      } else if (
+        courseData.courseContent?.length &&
+        courseData.courseContent[0]?.subSection?.length
       ) {
         setSelectedLecture(courseData.courseContent[0].subSection[0]);
       }
@@ -74,9 +99,31 @@ export default function ViewCourse() {
       ? allLectures[currentIndex + 1]
       : null;
 
-  const markCompleted = () => {
-    setCompleted(true);
+  const handleVideoEnd = () => {
+  if (nextLecture) {
+    setSelectedLecture(nextLecture);
+  }
+};
+
+  const markCompleted = async () => {
+    if (completedLectures.includes(selectedLecture._id)) return;
+
+    const response = await markLectureComplete(
+      courseId,
+      selectedLecture._id,
+      token,
+    );
+
+    if (response?.success) {
+      setCompletedLectures((prev) => [...prev, selectedLecture._id]);
+    }
   };
+
+  useEffect(() => {
+    if (!selectedLecture) return;
+
+    updateLastViewedLecture(courseId, selectedLecture._id, token);
+  }, [selectedLecture]);
 
   if (loading)
     return (
@@ -101,10 +148,7 @@ export default function ViewCourse() {
           <VideoSidebar
             sections={course.courseContent}
             selectedLecture={selectedLecture}
-            setSelectedLecture={(lecture) => {
-              setSelectedLecture(lecture);
-              setCompleted(false);
-            }}
+            setSelectedLecture={setSelectedLecture}
           />
         </aside>
 
@@ -113,10 +157,7 @@ export default function ViewCourse() {
         <MobileSidebar
           sections={course.courseContent}
           selectedLecture={selectedLecture}
-          setSelectedLecture={(lecture) => {
-            setCompleted(false);
-            setSelectedLecture(lecture);
-          }}
+          setSelectedLecture={setSelectedLecture}
         />
 
         <main className="space-y-6 p-6">
@@ -131,17 +172,17 @@ export default function ViewCourse() {
 
           {/* Header */}
 
-          <CourseHeader course={course} totalLectures={totalLectures} />
+          <CourseHeader course={course} totalLectures={totalLectures}  completedLectures={completedLectures.length} />
 
           {/* Video */}
 
-          <VideoPlayer selectedLecture={selectedLecture} />
+          <VideoPlayer selectedLecture={selectedLecture} onVideoEnd={handleVideoEnd}/>
 
           {/* Lecture */}
 
           <LectureContent
             selectedLecture={selectedLecture}
-            completed={completed}
+            completed={completedLectures.includes(selectedLecture?._id)}
             markCompleted={markCompleted}
           />
 
@@ -150,12 +191,9 @@ export default function ViewCourse() {
           <LectureNavigation
             previousLecture={previousLecture}
             nextLecture={nextLecture}
-            setSelectedLecture={(lecture) => {
-              setCompleted(false);
-              setSelectedLecture(lecture);
-            }}
+            setSelectedLecture={setSelectedLecture}
             markCompleted={markCompleted}
-            completed={completed}
+            completed={completedLectures.includes(selectedLecture?._id)}
           />
         </main>
       </div>

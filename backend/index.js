@@ -10,6 +10,9 @@ const profileRoutes = require("./routes/Profile")
 const courseRoutes = require("./routes/Course")
 const paymentRoutes = require("./routes/Payment")
 const AI = require("./routes/AI")
+const lectureNoteRoutes = require("./routes/LectureNote");
+const courseProgressRoutes =
+require("./routes/CourseProgress");
 
 const dbConnect = require("./config/database")
 dbConnect()
@@ -42,6 +45,10 @@ app.use("/api/v1/profile", profileRoutes)
 app.use("/api/v1/course", courseRoutes)
 app.use("/api/v1/payment", paymentRoutes)
 app.use("/api/v1/ai", AI);
+app.use(
+  "/api/v1/progress",
+  courseProgressRoutes
+);
 
 app.get("/", (req,res) => {
   res.send("<h1>Your server is up and running  </h1>")

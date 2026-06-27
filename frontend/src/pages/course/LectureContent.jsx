@@ -1,24 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Clock,
   CheckCircle,
   NotebookPen,
 } from "lucide-react";
 
+import { useSelector } from "react-redux";
+import { saveNotes } from "../../services/operations/courseProgressAPI";
+
 export default function LectureContent({
   selectedLecture,
   completed,
   markCompleted,
 }) {
-  const [notes, setNotes] = useState("");
+ const noteKey =
+  selectedLecture?._id || "";
+
+const [notes, setNotes] = useState("");
+
+const { token } = useSelector(
+    (state)=>state.auth
+);
+
+useEffect(() => {
+  if (!noteKey) return;
+
+  const saved =
+    localStorage.getItem(
+      `lecture-note-${noteKey}`
+    );
+
+  setNotes(saved || "");
+}, [noteKey]);
 
   if (!selectedLecture) return null;
 
-  const saveNotes = () => {
-    // Backend integration later
-    alert("Notes saved successfully.");
-  };
+ const handleSaveNotes = async () => {
 
+   const response = await saveNotes(
+      selectedLecture._id,
+      notes,
+      token
+   );
+
+   if(response?.success){
+      alert("Notes Saved");
+   }
+};
   return (
     <div className="rounded-2xl bg-white shadow-md">
 
@@ -119,7 +147,7 @@ export default function LectureContent({
         <div className="mt-5 flex justify-end">
 
           <button
-            onClick={saveNotes}
+            onClick={handleSaveNotes}
             className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
             Save Notes

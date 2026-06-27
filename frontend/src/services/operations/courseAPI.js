@@ -36,9 +36,8 @@ export const createCourse = async (formData, token) => {
   } finally {
     toast.dismiss(toastId);
   }
-};
+}
 
-// ================= CREATE SECTION =================
 
 export const createSection = async (data, token) => {
   const toastId = toast.loading("Creating Section...");
@@ -109,7 +108,7 @@ export const getCourseDetails = async (courseId) => {
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/course/getCourseDetails?courseId=${courseId}`
+      `${BASE_URL}/course/getCourseDetails?courseId=${courseId}`,
     );
     return response.data;
   } catch (error) {
@@ -124,7 +123,7 @@ export const getAllCourses = async () => {
   try {
     const response = await apiConnector(
       "GET",
-      `${BASE_URL}/course/getAllCourses`
+      `${BASE_URL}/course/getAllCourses`,
     );
 
     return response.data;
@@ -136,14 +135,11 @@ export const getAllCourses = async () => {
 
 export const getInstructorCourses = async (token) => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/course/instructorCourses`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.get(`${BASE_URL}/course/instructorCourses`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     console.log(response.data);
 
@@ -254,10 +250,7 @@ export const deleteCourse = async (courseId, token) => {
   }
 };
 
-export const capturePayment = async (
-  courseId,
-  token
-) => {
+export const capturePayment = async (courseId, token) => {
   try {
     const response = await apiConnector(
       "POST",
@@ -265,7 +258,7 @@ export const capturePayment = async (
       { courseId },
       {
         Authorization: `Bearer ${token}`,
-      }
+      },
     );
 
     return response.data;
