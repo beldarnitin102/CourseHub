@@ -38,6 +38,7 @@ import EditCourse from "../pages/dashboard/instructor/EditCourse";
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import MainLayout from "../layouts/MainLayout";
 import AIGenerateCourse from "../pages/dashboard/AIGenerateCourse";
+import Admin from "../pages/dashboard/Admin";
 
 export default function AppRoutes() {
   return (
@@ -84,13 +85,13 @@ export default function AppRoutes() {
       />
 
       <Route
-  path="/course/:courseId"
-  element={
-    <MainLayout>
-      <CourseDetails />
-    </MainLayout>
-  }
-/>
+        path="/course/:courseId"
+        element={
+          <MainLayout>
+            <CourseDetails />
+          </MainLayout>
+        }
+      />
 
       <Route
         path="/dashboard/profile"
@@ -235,16 +236,17 @@ export default function AppRoutes() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
 
-      
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 
       <Route path="/dashboard/edit-course/:courseId" element={<EditCourse />} />
 
       <Route
-  path="/dashboard/ai-course-generator"
-  element={<AIGenerateCourse />}
-/>
+        path="/dashboard/ai-course-generator"
+        element={<AIGenerateCourse />}
+      />
+
+      <Route path="/admin" element={<Admin/>}></Route>
     </Routes>
   );
 }
