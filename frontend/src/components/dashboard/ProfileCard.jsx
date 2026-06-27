@@ -1,18 +1,25 @@
 import { useSelector } from "react-redux";
 
-export default function ProfileCard() {
+export default function ProfileCard({
+  enrolledCourses = 0,
+  completedCourses = 0,
+  overallProgress = 0,
+}) {
   const { user } = useSelector((state) => state.profile);
 
   return (
     <div className="overflow-hidden rounded-3xl bg-white shadow-lg">
-      
+
       {/* Cover */}
+
       <div className="h-40 bg-gradient-to-r from-[#2563EB] to-indigo-600"></div>
 
-      {/* Profile Content */}
+      {/* Content */}
+
       <div className="relative px-8 pb-8">
 
-        {/* Profile Image */}
+        {/* Avatar */}
+
         <div className="-mt-16">
           <img
             src={
@@ -25,7 +32,9 @@ export default function ProfileCard() {
         </div>
 
         {/* User Info */}
+
         <div className="mt-4">
+
           <h2 className="text-3xl font-bold text-[#111827]">
             {user?.firstName} {user?.lastName}
           </h2>
@@ -37,41 +46,53 @@ export default function ProfileCard() {
           <span className="mt-4 inline-block rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-[#2563EB]">
             {user?.accountType}
           </span>
+
         </div>
 
         {/* Stats */}
+
         <div className="mt-8 grid gap-4 md:grid-cols-3">
 
           <div className="rounded-2xl bg-gray-50 p-5 text-center">
+
             <h3 className="text-3xl font-bold text-[#2563EB]">
-              12
+              {enrolledCourses}
             </h3>
+
             <p className="text-gray-500">
-              Courses
+              Enrolled Courses
             </p>
+
           </div>
 
           <div className="rounded-2xl bg-gray-50 p-5 text-center">
+
             <h3 className="text-3xl font-bold text-green-600">
-              8
+              {completedCourses}
             </h3>
+
             <p className="text-gray-500">
-              Completed
+              Completed Courses
             </p>
+
           </div>
 
           <div className="rounded-2xl bg-gray-50 p-5 text-center">
+
             <h3 className="text-3xl font-bold text-orange-500">
-              72%
+              {overallProgress}%
             </h3>
+
             <p className="text-gray-500">
-              Progress
+              Overall Progress
             </p>
+
           </div>
 
         </div>
 
       </div>
+
     </div>
   );
 }

@@ -17,16 +17,19 @@ export default function MyCourses() {
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const result = await getUserEnrolledCourses(token);
+ useEffect(() => {
+  const fetchCourses = async () => {
+    const result = await getUserEnrolledCourses(token);
+    
+    // Check if result has a .data property or fallback to an empty array
+    const coursesArray = result?.data || result || [];
+    
+    setCourses(Array.isArray(coursesArray) ? coursesArray : []);
+    setLoading(false);
+  };
 
-      setCourses(result);
-      setLoading(false);
-    };
-
-    fetchCourses();
-  }, [token]);
+  fetchCourses();
+}, [token]);
 
   if (loading) {
     return (
