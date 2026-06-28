@@ -4,19 +4,11 @@ const router = express.Router();
 
 const { auth, isAdmin } = require("../middleware/auth");
 
-const {
-    getDashboardStats,
-} = require("../controllers/Admin/dashboard");
+const { getDashboardStats } = require("../controllers/Admin/dashboard");
 
-const {
-    getAllUsers,
-    deleteUser,
-} = require("../controllers/Admin/users");
+const { getAllUsers, deleteUser } = require("../controllers/Admin/users");
 
-const {
-    getAllCourses,
-    deleteCourse,
-} = require("../controllers/Admin/courses");
+const { getAllCourses, deleteCourse } = require("../controllers/Admin/courses");
 
 const {
   createCategory,
@@ -25,70 +17,30 @@ const {
   deleteCategory,
 } = require("../controllers/Admin/categories");
 
+const { getInstructorDetails } = require("../controllers/admin/userController");
 
-router.get(
-    "/dashboard",
-    auth,
-    isAdmin,
-    getDashboardStats
-);
+const { getStudentDetails } = require("../controllers/admin/userController");
 
-router.get(
-    "/users",
-    auth,
-    isAdmin,
-    getAllUsers
-);
+router.get("/student/:id", auth, isAdmin, getStudentDetails);
 
-router.delete(
-    "/users/:userId",
-    auth,
-    isAdmin,
-    deleteUser
-);
+router.get("/instructor/:id", auth, isAdmin, getInstructorDetails);
 
-router.get(
-    "/courses",
-    auth,
-    isAdmin,
-    getAllCourses
-);
+router.get("/dashboard", auth, isAdmin, getDashboardStats);
 
-router.delete(
-    "/courses/:courseId",
-    auth,
-    isAdmin,
-    deleteCourse
-);
+router.get("/users", auth, isAdmin, getAllUsers);
 
+router.delete("/users/:userId", auth, isAdmin, deleteUser);
 
+router.get("/courses", auth, isAdmin, getAllCourses);
 
-router.post(
-  "/create-category",
-  auth,
-  isAdmin,
-  createCategory
-);
+router.delete("/courses/:courseId", auth, isAdmin, deleteCourse);
 
-router.get(
-  "/get-all-categories",
-  auth,
-  isAdmin,
-  getAllCategories
-);
+router.post("/create-category", auth, isAdmin, createCategory);
 
-router.put(
-  "/update-category",
-  auth,
-  isAdmin,
-  updateCategory
-);
+router.get("/get-all-categories", auth, isAdmin, getAllCategories);
 
-router.delete(
-  "/delete-category",
-  auth,
-  isAdmin,
-  deleteCategory
-);
+router.put("/update-category", auth, isAdmin, updateCategory);
+
+router.delete("/delete-category", auth, isAdmin, deleteCategory);
 
 module.exports = router;

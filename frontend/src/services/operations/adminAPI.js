@@ -57,3 +57,40 @@ export const getAllCourses = async (token) => {
     console.log(error);
   }
 };
+
+export const getInstructorDetails = async (id, token) => {
+  try {
+    const response = await apiConnector(
+      "GET",
+      adminEndpoints.INSTRUCTOR_DETAILS(id),
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getStudentDetails = async (
+  id,
+  token
+) => {
+  try {
+    const response = await apiConnector(
+      "GET",
+      adminEndpoints.STUDENT_DETAILS(id),
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

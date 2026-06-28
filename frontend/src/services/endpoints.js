@@ -47,4 +47,7 @@ export const adminEndpoints = {
   DASHBOARD: `${BASE_URL}/admin/dashboard`,
   USERS: `${BASE_URL}/admin/users`,
   COURSES: `${BASE_URL}/admin/courses`,
+  CATEGORIES: `${BASE_URL}/admin/categories`,
+  INSTRUCTOR_DETAILS: (id) => `${BASE_URL}/admin/instructor/${id}`,
+  STUDENT_DETAILS: (id) => `${BASE_URL}/admin/student/${id}`,
 };

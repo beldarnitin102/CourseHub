@@ -43,6 +43,8 @@ import Analytics from "../pages/Admin/Analytics";
 import Dashboard from "../pages/Admin/Dashboard";
 import Users from "../pages/Admin/Users";
 import Categories from "../pages/Admin/Categories";
+import InstructorDetails from "../pages/Admin/InstructorDetails";
+import StudentDetails from "../pages/Admin/StudentDetails";
 
 export default function AppRoutes() {
   return (
@@ -289,6 +291,28 @@ export default function AppRoutes() {
           <PrivateRoute>
             <AdminRoute>
               <Analytics />
+            </AdminRoute>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/admin/instructor/:id"
+        element={
+          <PrivateRoute>
+            <AdminRoute>
+              <InstructorDetails />
+            </AdminRoute>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/admin/student/:id"
+        element={
+          <PrivateRoute>
+            <AdminRoute>
+              <StudentDetails />
             </AdminRoute>
           </PrivateRoute>
         }
