@@ -42,3 +42,9 @@ export const profileEndpoints = {
   GET_USER_DETAILS: `${BASE_URL}/profile/getUserDetails`,
   GET_ENROLLED_COURSES: `${BASE_URL}/profile/getEnrolledCourses`,
 };
+
+export const adminEndpoints = {
+  DASHBOARD: `${BASE_URL}/admin/dashboard`,
+  USERS: `${BASE_URL}/admin/users`,
+  COURSES: `${BASE_URL}/admin/courses`,
+};

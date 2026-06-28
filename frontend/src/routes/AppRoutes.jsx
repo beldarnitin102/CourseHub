@@ -38,7 +38,11 @@ import EditCourse from "../pages/dashboard/instructor/EditCourse";
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import MainLayout from "../layouts/MainLayout";
 import AIGenerateCourse from "../pages/dashboard/AIGenerateCourse";
-import Admin from "../pages/dashboard/Admin";
+import AdminRoute from "../components/auth/AdminRoute"
+import Analytics from "../pages/Admin/Analytics";
+import Dashboard from "../pages/Admin/Dashboard";
+import Users from "../pages/Admin/Users";
+import Categories from "../components/home/Categories";
 
 export default function AppRoutes() {
   return (
@@ -246,7 +250,60 @@ export default function AppRoutes() {
         element={<AIGenerateCourse />}
       />
 
-      <Route path="/admin" element={<Admin/>}></Route>
+     <Route
+  path="/dashboard/admin"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <Dashboard />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/dashboard/admin/users"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <Users />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/dashboard/admin/courses"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <Courses />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/dashboard/admin/categories"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <Categories />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/dashboard/admin/analytics"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <Analytics />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
     </Routes>
   );
 }

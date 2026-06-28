@@ -13,6 +13,7 @@ const AI = require("./routes/AI")
 const lectureNoteRoutes = require("./routes/LectureNote");
 const courseProgressRoutes =
 require("./routes/CourseProgress");
+const adminRoutes = require("./routes/Admin")
 
 const dbConnect = require("./config/database")
 dbConnect()
@@ -49,6 +50,7 @@ app.use(
   "/api/v1/progress",
   courseProgressRoutes
 );
+app.use("/api/v1/admin", adminRoutes);
 
 app.get("/", (req,res) => {
   res.send("<h1>Your server is up and running  </h1>")
