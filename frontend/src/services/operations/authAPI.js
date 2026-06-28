@@ -68,18 +68,17 @@ export const login = async (email, password, dispatch, navigate) => {
 
     dispatch(setUser(response.data.user));
 
-    
     // user object should still be stringified
     localStorage.setItem("user", JSON.stringify(response.data.user));
 
     toast.success("Login Successful");
 
     if (response.data.user.accountType === "Student") {
-      navigate("/dashboard");
+      navigate("/dashboard/student");
     } else if (response.data.user.accountType === "Instructor") {
       navigate("/dashboard/instructor");
-    } else {
-      navigate("/");
+    } else if (response.data.user.accountType === "Admin") {
+      navigate("/dashboard/admin");
     }
   } catch (error) {
     toast.error(error?.response?.data?.message || "Login Failed");

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/dashboard/AdminLayout";
-import { getAllCategories } from "../../services/operations/categoryAPI";
+import { getCategories } from "../../services/operations/courseAPI";
 
 export default function Categories() {
 
@@ -10,7 +10,7 @@ export default function Categories() {
 
     async function fetchCategories() {
 
-      const response = await getAllCategories();
+      const response = await getCategories();
 
       if (response?.success) {
         setCategories(response.data);
