@@ -94,3 +94,20 @@ export const getStudentDetails = async (
     console.log(err);
   }
 };
+
+export const deleteCourse = async (courseId, token) => {
+  try {
+    const response = await apiConnector(
+      "DELETE",
+      `${COURSES}/${courseId}`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

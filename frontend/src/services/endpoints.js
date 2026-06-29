@@ -51,3 +51,11 @@ export const adminEndpoints = {
   INSTRUCTOR_DETAILS: (id) => `${BASE_URL}/admin/instructor/${id}`,
   STUDENT_DETAILS: (id) => `${BASE_URL}/admin/student/${id}`,
 };
+
+export const adminCategoryEndpoints = {
+  CREATE_CATEGORY: `${BASE_URL}/admin/create-category`,
+
+  UPDATE_CATEGORY: `${BASE_URL}/admin/update-category`,
+
+  DELETE_CATEGORY: `${BASE_URL}/admin/delete-category`,
+};

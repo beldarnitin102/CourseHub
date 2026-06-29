@@ -45,6 +45,8 @@ import Users from "../pages/Admin/Users";
 import Categories from "../pages/Admin/Categories";
 import InstructorDetails from "../pages/Admin/InstructorDetails";
 import StudentDetails from "../pages/Admin/StudentDetails";
+import AdminCourses from "../pages/Admin/AdminCourses";
+import AdminCourseDetails from "../pages/Admin/AdminCourseDetails";
 
 export default function AppRoutes() {
   return (
@@ -263,16 +265,16 @@ export default function AppRoutes() {
         }
       />
 
-      <Route
-        path="/dashboard/admin/courses"
-        element={
-          <PrivateRoute>
-            <AdminRoute>
-              <Courses />
-            </AdminRoute>
-          </PrivateRoute>
-        }
-      />
+     <Route
+  path="/dashboard/admin/courses"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <AdminCourses />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
 
       <Route
         path="/dashboard/admin/categories"
@@ -317,6 +319,17 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+  path="/dashboard/admin/course/:courseId"
+  element={
+    <PrivateRoute>
+      <AdminRoute>
+        <AdminCourseDetails />
+      </AdminRoute>
+    </PrivateRoute>
+  }
+/>
     </Routes>
   );
 }
