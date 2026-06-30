@@ -268,3 +268,4 @@ export const capturePayment = async (courseId, token) => {
     return null;
   }
 };
+

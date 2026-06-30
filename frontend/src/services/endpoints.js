@@ -48,8 +48,12 @@ export const adminEndpoints = {
   USERS: `${BASE_URL}/admin/users`,
   COURSES: `${BASE_URL}/admin/courses`,
   CATEGORIES: `${BASE_URL}/admin/categories`,
+
   INSTRUCTOR_DETAILS: (id) => `${BASE_URL}/admin/instructor/${id}`,
   STUDENT_DETAILS: (id) => `${BASE_URL}/admin/student/${id}`,
+
+   COURSE_DETAILS: (id) =>
+    `${BASE_URL}/admin/course/${id}`,
 };
 
 export const adminCategoryEndpoints = {

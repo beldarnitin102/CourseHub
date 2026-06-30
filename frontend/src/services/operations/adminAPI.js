@@ -111,3 +111,23 @@ export const deleteCourse = async (courseId, token) => {
     console.log(error);
   }
 };
+
+export const getCourseDetailsAdmin = async (
+  courseId,
+  token
+) => {
+  try {
+    const response = await apiConnector(
+      "GET",
+      adminEndpoints.COURSE_DETAILS(courseId),
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -8,7 +8,7 @@ const { getDashboardStats } = require("../controllers/Admin/dashboard");
 
 const { getAllUsers, deleteUser } = require("../controllers/Admin/users");
 
-const { getAllCourses, deleteCourse } = require("../controllers/Admin/courses");
+const { getAllCourses, deleteCourse, getCourseDetailsAdmin } = require("../controllers/Admin/courses");
 
 const {
   createCategory,
@@ -42,5 +42,12 @@ router.get("/get-all-categories", auth, isAdmin, getAllCategories);
 router.put("/update-category", auth, isAdmin, updateCategory);
 
 router.delete("/delete-category", auth, isAdmin, deleteCategory);
+
+router.get(
+    "/course/:courseId",
+    auth,
+    isAdmin,
+    getCourseDetailsAdmin
+);
 
 module.exports = router;

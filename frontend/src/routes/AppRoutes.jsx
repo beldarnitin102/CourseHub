@@ -265,16 +265,16 @@ export default function AppRoutes() {
         }
       />
 
-     <Route
-  path="/dashboard/admin/courses"
-  element={
-    <PrivateRoute>
-      <AdminRoute>
-        <AdminCourses />
-      </AdminRoute>
-    </PrivateRoute>
-  }
-/>
+      <Route
+        path="/dashboard/admin/courses"
+        element={
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminCourses />
+            </AdminRoute>
+          </PrivateRoute>
+        }
+      />
 
       <Route
         path="/dashboard/admin/categories"
@@ -321,15 +321,15 @@ export default function AppRoutes() {
       />
 
       <Route
-  path="/dashboard/admin/course/:courseId"
-  element={
-    <PrivateRoute>
-      <AdminRoute>
-        <AdminCourseDetails />
-      </AdminRoute>
-    </PrivateRoute>
-  }
-/>
+        path="/dashboard/admin/course/:courseId"
+        element={
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminCourseDetails />
+            </AdminRoute>
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }
