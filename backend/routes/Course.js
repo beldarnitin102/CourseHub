@@ -44,6 +44,9 @@ const {
   isAdmin,
 } = require("../middleware/auth");
 
+const { askMentor } = require("../controllers/Mentor");
+
+router.post("/mentor", auth, askMentor);
 router.post("/createCourse", auth, isInstructor, createCourse);
 router.post("/updateCourse", auth, isInstructor, updateCourse);
 router.post("/addSection", auth, isInstructor, createSection);
