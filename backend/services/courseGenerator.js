@@ -17,6 +17,7 @@ exports.createCourseFromAI = async (
   videos,
   instructorId,
   categoryId,
+   aiResources
 ) => {
   try {
     const videoMap = {};
@@ -28,18 +29,30 @@ exports.createCourseFromAI = async (
       videos.find((v) => v.thumbnail)?.thumbnail ||
       "https://placehold.co/600x400/1a1a2e/ffffff?text=Course+Thumbnail";
 
-    const course = await Course.create({
-      courseName: aiData.courseName,
-      courseDescirption: aiData.courseDescription, // matches model field (note: model has typo)
-      whatYouWillLearn: Array.isArray(aiData.whatYouWillLearn)
-        ? aiData.whatYouWillLearn.join("\n")
-        : aiData.whatYouWillLearn || "",
-      instructor: instructorId,
-      category: categoryId,
-      tags: Array.isArray(aiData.tags) ? aiData.tags : [],
-      thumbnail: courseThumbnail,
-      price: 0, // AI-generated courses are free by default
-    });
+   const course = await Course.create({
+    courseName: aiData.courseName,
+
+    courseDescirption: aiData.courseDescription,
+
+    whatYouWillLearn:
+        Array.isArray(aiData.whatYouWillLearn)
+            ? aiData.whatYouWillLearn.join("\n")
+            : aiData.whatYouWillLearn || "",
+
+    instructor: instructorId,
+
+    category: categoryId,
+
+    tags: Array.isArray(aiData.tags)
+        ? aiData.tags
+        : [],
+
+    thumbnail: courseThumbnail,
+
+    price: 30,
+
+    aiResources
+});
 
     const sectionIds = [];
 

@@ -54,6 +54,38 @@ const CourseSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  aiResources: {
+
+    notes: {
+        type: Object,
+        default: {}
+    },
+
+    quiz: {
+        type: Object,
+        default: {}
+    },
+
+    assignments: {
+        type: Object,
+        default: {}
+    },
+
+    roadmap: {
+        type: Object,
+        default: {}
+    },
+
+    projects: {
+        type: Object,
+        default: {}
+    },
+     documentation:{
+        type:Object,
+        default:{}
+    }
+
+},
 });
 
 module.exports = mongoose.model("Course", CourseSchema);

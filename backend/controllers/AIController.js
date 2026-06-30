@@ -2,8 +2,18 @@ const {
   extractPlaylistId,
   getPlaylistVideos,
 } = require("../services/youtubeService");
+
 const groq = require("../config/groq");
+
 const { createCourseFromAI } = require("../services/courseGenerator");
+const { generateNotes } = require("../services/ai/notesGenerator");
+const { generateQuiz } = require("../services/ai/quizGenerator");
+const { generateAssignments } = require("../services/ai/assignmentGenerator");
+const { generateRoadmap } = require("../services/ai/roadmapGenerator");
+const { generateProjects } = require("../services/ai/projectGenerator");
+const {
+  generateDocumentation,
+} = require("../services/ai/documentationGenerator");
 
 exports.generateCourseFromPlaylist = async (req, res) => {
   try {
@@ -144,11 +154,49 @@ Rules:
     }
 
     // ── 5. Persist course to DB ─────────────────────────────────────
+    // ── 5. Generate Additional AI Resources ───────────────────────────
+
+    const aiResources = {};
+
+    // Documentation (instant, no AI)
+    aiResources.documentation = generateDocumentation(aiResponse.tags || []);
+
+    try {
+      const [notes, quiz, assignments, roadmap, projects] = await Promise.all([
+        generateNotes(aiResponse),
+        generateQuiz(aiResponse),
+        generateAssignments(aiResponse),
+        generateRoadmap(aiResponse),
+        generateProjects(aiResponse),
+      ]);
+
+      aiResources.notes = notes;
+      aiResources.quiz = quiz;
+      aiResources.assignments = assignments;
+      aiResources.roadmap = roadmap;
+      aiResources.projects = projects;
+    } catch (resourceError) {
+      console.error("AI Resource Generation Failed:", resourceError);
+
+      aiResources.notes = {};
+      aiResources.quiz = {};
+      aiResources.assignments = {};
+      aiResources.roadmap = {};
+      aiResources.projects = {};
+    }
+
+    // ── 6. Save Complete Course ─────────────────────────────
+
     const createdCourse = await createCourseFromAI(
       aiResponse,
+
       videos,
+
       req.user.id,
+
       categoryId,
+
+      aiResources,
     );
 
     return res.status(200).json({
