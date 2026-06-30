@@ -82,7 +82,7 @@ export default function CourseInformationForm() {
 
     if (result?.success) {
       dispatch(setCourse(result.data));
-
+      localStorage.setItem("courseId", result.data._id);
       navigate("/dashboard/instructor-courses");
     }
   };

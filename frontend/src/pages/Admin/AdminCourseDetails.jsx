@@ -65,6 +65,26 @@ export default function AdminCourseDetails() {
           </button>
         </div>
 
+        <div className="rounded-3xl bg-white p-6 shadow">
+          <h2 className="mb-6 text-2xl font-bold">Instructor</h2>
+
+          <div className="flex items-center gap-5">
+            <img
+              src={course.instructor?.[0]?.image}
+              className="h-20 w-20 rounded-full"
+            />
+
+            <div>
+              <h3 className="text-2xl font-bold">
+                {course.instructor?.[0]?.firstName}{" "}
+                {course.instructor?.[0]?.lastName}
+              </h3>
+
+              <p>{course.instructor?.[0]?.email}</p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-3xl bg-white p-6 shadow">
             <h2 className="mb-6 text-2xl font-bold">Course Information</h2>
@@ -74,8 +94,8 @@ export default function AdminCourseDetails() {
                 <span className="font-medium">Instructor</span>
 
                 <span>
-                  {course.instructor
-                    ? `${course.instructor.firstName} ${course.instructor.lastName}`
+                  {course.instructor?.length > 0
+                    ? `${course.instructor[0].firstName} ${course.instructor[0].lastName}`
                     : "-"}
                 </span>
               </div>
@@ -127,6 +147,39 @@ export default function AdminCourseDetails() {
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="rounded-3xl bg-white p-8 shadow">
+          <h2 className="mb-6 text-2xl font-bold">Enrolled Students</h2>
+
+          {course.studentsEnrolled?.length === 0 ? (
+            <p>No students enrolled.</p>
+          ) : (
+            <div className="space-y-4">
+              {course.studentsEnrolled.map((student) => (
+                <div
+                  key={student._id}
+                  className="flex items-center justify-between rounded-xl border p-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={student.image}
+                      alt=""
+                      className="h-12 w-12 rounded-full"
+                    />
+
+                    <div>
+                      <h3 className="font-semibold">
+                        {student.firstName} {student.lastName}
+                      </h3>
+
+                      <p className="text-sm text-gray-500">{student.email}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </AdminLayout>
