@@ -14,6 +14,8 @@ const lectureNoteRoutes = require("./routes/LectureNote");
 const courseProgressRoutes =
 require("./routes/CourseProgress");
 const adminRoutes = require("./routes/Admin")
+const mentorRoutes = require("./routes/mentorRoutes");
+
 
 const dbConnect = require("./config/database")
 dbConnect()
@@ -51,6 +53,9 @@ app.use(
   courseProgressRoutes
 );
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/mentor", mentorRoutes);
+
+app.use("/api/v1/mentor", mentorRoutes);
 
 app.get("/", (req,res) => {
   res.send("<h1>Your server is up and running  </h1>")

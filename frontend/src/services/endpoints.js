@@ -63,3 +63,7 @@ export const adminCategoryEndpoints = {
 
   DELETE_CATEGORY: `${BASE_URL}/admin/delete-category`,
 };
+
+export const mentorEndpoints = {
+  ASK_MENTOR: `${BASE_URL}/mentor/ask`,
+};

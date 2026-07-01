@@ -11,16 +11,27 @@ import {
   getLectureNote,
 } from "../../services/operations/lectureAPI";
 
+
+import AIMentor from "../../components/mentor/AIMentor";
+import MentorAnswer from "../../components/mentor/MentorAnswer";
+
+import { askMentor } from "../../services/operations/mentorAPI";
+
 export default function LectureContent({
   selectedLecture,
    courseId,
   completed,
   markCompleted,
+  course,
 }) {
  const noteKey =
   selectedLecture?._id || "";
 
 const [notes, setNotes] = useState("");
+
+const [mentorLoading, setMentorLoading] = useState(false);
+
+const [mentorAnswer, setMentorAnswer] = useState(null);
 
 const { token } = useSelector(
     (state)=>state.auth
@@ -60,6 +71,24 @@ useEffect(() => {
    if(response?.success){
       alert("Notes Saved");
    }
+};
+
+const handleAskMentor = async (question) => {
+
+  setMentorLoading(true);
+
+  const response = await askMentor(
+    courseId,
+    question,
+    token
+  );
+
+  if (response) {
+    setMentorAnswer(response);
+  }
+
+  setMentorLoading(false);
+
 };
   return (
     <div className="rounded-2xl bg-white shadow-md">
@@ -147,6 +176,25 @@ useEffect(() => {
           </h3>
 
         </div>
+        {/* AI Mentor */}
+
+<div className="mt-10">
+
+  <AIMentor
+
+    loading={mentorLoading}
+
+    onAsk={handleAskMentor}
+
+  />
+
+  <MentorAnswer
+
+    answer={mentorAnswer}
+
+  />
+
+</div>
 
         <textarea
           rows={7}

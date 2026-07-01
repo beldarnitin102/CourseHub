@@ -188,6 +188,7 @@ export default function ViewCourse() {
           {/* Lecture */}
 
           <LectureContent
+           course={course}
             selectedLecture={selectedLecture}
             courseId={courseId}
             completed={completedLectures.includes(selectedLecture?._id)}
