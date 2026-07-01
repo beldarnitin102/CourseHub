@@ -45,9 +45,15 @@ const {
 } = require("../middleware/auth");
 
 const { askMentor } = require("../controllers/Mentor");
+const { getRecommendations } = require("../controllers/Recommendation");
+const { generateStudyPlan } = require("../controllers/StudyPlanner");
+const { generateInterviewMode } = require("../controllers/Interview");
 
+router.post("/generate-interview", auth, generateInterviewMode);
+router.post("/recommendations", auth, getRecommendations);
+router.post("/generateStudyPlanner", auth, isStudent, generateStudyPlan);
 router.post("/mentor", auth, askMentor);
-router.post("/createCourse", auth, isInstructor, createCourse);
+router.post("/createCourse", auth, isInstructor, createCourse); 
 router.post("/updateCourse", auth, isInstructor, updateCourse);
 router.post("/addSection", auth, isInstructor, createSection);
 router.post("/updateSection", auth, isInstructor, updateSection);
@@ -57,7 +63,11 @@ router.get("/getAllCourses", showAllCourses);
 router.get("/getCourseDetails/:courseId", getCourseDetails);
 router.get("/instructorCourses", auth, isInstructor, getInstructorCourses);
 router.get(
-  "/instructorCourse/:courseId",auth,isInstructor,getInstructorCourse,);
+  "/instructorCourse/:courseId",
+  auth,
+  isInstructor,
+  getInstructorCourse,
+);
 router.get("/instructorDashboard", auth, isInstructor, getInstructorDashboard);
 
 router.delete("/deleteCourse", auth, isInstructor, deleteCourse);
