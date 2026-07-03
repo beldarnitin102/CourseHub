@@ -48,8 +48,10 @@ const {
 const { getRecommendations } = require("../controllers/Recommendation");
 const { generateStudyPlan } = require("../controllers/StudyPlanner");
 const { generateInterviewMode } = require("../controllers/Interview");
+const { generateCourseProjectsController } = require("../controllers/Project");
 
 router.post("/generate-interview", auth, generateInterviewMode);
+router.post("/generate", auth, isStudent, generateCourseProjectsController);
 router.post("/recommendations", auth, getRecommendations);
 router.post("/generateStudyPlanner", auth, isStudent, generateStudyPlan);
 router.post("/createCourse", auth, isInstructor, createCourse); 

@@ -67,3 +67,11 @@ export const adminCategoryEndpoints = {
 export const mentorEndpoints = {
   ASK_MENTOR: `${BASE_URL}/mentor/ask`,
 };
+
+export const studyPlannerEndpoints = {
+  GENERATE: `${BASE_URL}/course/generateStudyPlanner`,
+};
+
+export const projectEndpoints = {
+  GENERATE: `${BASE_URL}/course/generate`,
+};

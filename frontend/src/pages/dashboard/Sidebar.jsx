@@ -20,7 +20,7 @@ export default function Sidebar() {
   const studentLinks = [
     {
       name: "Dashboard",
-      path: "/dashboard",
+      path: "/dashboard/student",
       icon: "🏠",
     },
     {
