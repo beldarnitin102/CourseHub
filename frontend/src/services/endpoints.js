@@ -75,3 +75,16 @@ export const studyPlannerEndpoints = {
 export const projectEndpoints = {
   GENERATE: `${BASE_URL}/course/generate`,
 };
+
+export const interviewEndpoints = {
+
+  START: `${BASE_URL}/course/generate-interview`,
+
+  ANSWER: `${BASE_URL}/course/generate-interview`,
+
+};
+
+// Example check for your endpoints.js file:
+export const recommendationEndpoints = {
+  GENERATE: `${BASE_URL}/course/recommendations`, // ya jo bhi apka backend route hai
+};

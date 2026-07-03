@@ -3,39 +3,33 @@ const { parseAIJSON } = require("./parseJson");
 
 exports.generateInterview = async (course) => {
   try {
+    const simplifiedCourse = {
+      title: course.courseName,
+      description: course.courseDescription,
+      topics: course.courseContent?.map((section) => ({
+        sectionName: section.sectionName,
+        subSections: section.subSection?.map((sub) => sub.title),
+      })),
+    };
+
     const prompt = `
 You are a Senior Software Engineer.
-
 Generate a complete interview preparation kit for this course.
 
-Course:
-
-${JSON.stringify(course)}
+Course Details:
+${JSON.stringify(simplifiedCourse)}
 
 Generate:
-
 - Beginner Questions
 - Intermediate Questions
 - Advanced Questions
 - Coding Questions
 - HR Questions
 
-For every technical question include
-
-Question
-
-Answer
-
-Difficulty
-
-Hints
-
-Expected Concepts
-
+For every technical question include: Question, Answer, Difficulty, Hints, Expected Concepts.
 Return ONLY valid JSON.
 
 Schema:
-
 {
   "beginner":[],
   "intermediate":[],
@@ -59,8 +53,24 @@ Schema:
     });
 
     return parseAIJSON(response.message.content[0].text);
-
   } catch (err) {
-    throw err;
+    console.log("error in intrview services")
+
+     return {
+      beginner: [
+        {
+          question: `Welcome to the ${course.courseName} interview! What is the primary concept behind this technology?`,
+          answer: "It is used for structural scalability and clean development implementations.",
+          difficulty: "Beginner",
+          hints: ["Think about basic lifecycle"],
+          expectedConcepts: ["Fundamentals"]
+        }
+      ],
+      intermediate: [],
+      advanced: [],
+      coding: [],
+      hr: []
+    };
+  
   }
 };

@@ -11,6 +11,8 @@ import MentorAnswer from "../../components/mentor/MentorAnswer";
 import { askMentor } from "../../services/operations/mentorAPI";
 import StudyPlanner from "../../components/studyPlanner/StudyPlanner";
 import AIProjects from "../../components/aiProjects/AIProjects";
+import AIInterview from "../../components/interview/AIInterview";
+import AIRecommendations from "../../components/recommendation/AIRecommendations";
 
 export default function LectureContent({
   selectedLecture,
@@ -18,6 +20,8 @@ export default function LectureContent({
   completed,
   markCompleted,
   course,
+   completedSections,
+  progress,
 }) {
   const noteKey = selectedLecture?._id || "";
   const [notes, setNotes] = useState("");
@@ -134,6 +138,14 @@ export default function LectureContent({
           <StudyPlanner courseId={courseId} />
 
           <AIProjects courseId={courseId} />
+
+          <AIInterview courseId={courseId} />
+
+          <AIRecommendations
+          courseId={courseId}
+           completedSections={completedSections}
+    progress={progress}
+          />
 
           {mentorAnswer && (
             <div className="mt-4 flex flex-col gap-2">

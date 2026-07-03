@@ -29,6 +29,29 @@ export default function ViewCourse() {
   // temporary state
   const [completedLectures, setCompletedLectures] = useState([]);
 
+  const totalLectures = useMemo(() => {
+    if (!course) return 0;
+
+    return course.courseContent.reduce(
+      (acc, sec) => acc + (sec.subSection?.length || 0),
+      0,
+    );
+  }, [course]);
+
+  const completedSections = course?.courseContent
+  ?.filter((section) =>
+    section.subSection.every((lecture) =>
+      completedLectures.includes(lecture._id)
+    )
+  )
+  ?.map((section) => section.sectionName) || [];
+
+const progress =
+  totalLectures > 0
+    ? Math.round((completedLectures.length / totalLectures) * 100)
+    : 0;
+
+
   useEffect(() => {
     fetchCourseDetails();
   }, [courseId]);
@@ -75,14 +98,7 @@ export default function ViewCourse() {
     }
   };
 
-  const totalLectures = useMemo(() => {
-    if (!course) return 0;
-
-    return course.courseContent.reduce(
-      (acc, sec) => acc + (sec.subSection?.length || 0),
-      0,
-    );
-  }, [course]);
+  
 
   const allLectures =
     course?.courseContent?.flatMap((section) => section.subSection) || [];
@@ -193,6 +209,8 @@ export default function ViewCourse() {
             courseId={courseId}
             completed={completedLectures.includes(selectedLecture?._id)}
             markCompleted={markCompleted}
+              completedSections={completedSections}
+    progress={progress}
           />
 
           {/* Navigation */}

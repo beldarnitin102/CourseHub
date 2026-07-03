@@ -144,7 +144,7 @@ exports.updateDisplayPicture = async (req, res) => {
 exports.getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
-   console.log("USER ID:", userId);
+  
     const userDetails = await User.findById(userId)
       .populate({
         path: "courses",
@@ -153,10 +153,6 @@ exports.getEnrolledCourses = async (req, res) => {
         },
       })
       .exec();
-        console.log(
-      "ENROLLED COURSES:",
-      userDetails.courses
-    );
 
     return res.status(200).json({
       success: true,
