@@ -26,13 +26,15 @@ const courseProgressSchema = new mongoose.Schema(
       ref: "SubSection",
       default: null,
     },
+    certificate: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Certificate",
+      default: null,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-module.exports = mongoose.model(
-  "CourseProgress",
-  courseProgressSchema
-);
+module.exports = mongoose.model("CourseProgress", courseProgressSchema);
