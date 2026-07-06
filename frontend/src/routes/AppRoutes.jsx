@@ -47,6 +47,7 @@ import InstructorDetails from "../pages/Admin/InstructorDetails";
 import StudentDetails from "../pages/Admin/StudentDetails";
 import AdminCourses from "../pages/Admin/AdminCourses";
 import AdminCourseDetails from "../pages/Admin/AdminCourseDetails";
+import Certificate from "../components/certificate/Certificate";
 
 export default function AppRoutes() {
   return (
@@ -120,6 +121,16 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route
+  path="/certificate/:courseId"
+  element={<PrivateRoute>
+            <StudentRoute>
+               <Certificate />
+            </StudentRoute>
+          </PrivateRoute>
+ }
+/>
 
       <Route
         path="/dashboard/my-courses"

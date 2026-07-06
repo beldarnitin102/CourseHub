@@ -88,3 +88,8 @@ export const interviewEndpoints = {
 export const recommendationEndpoints = {
   GENERATE: `${BASE_URL}/course/recommendations`, // ya jo bhi apka backend route hai
 };
+
+export const certificateEndpoints = {
+  GET_CERTIFICATE: `${BASE_URL}/certificate`,
+  DOWNLOAD_CERTIFICATE: `${BASE_URL}/certificate/download`,
+};

@@ -15,6 +15,7 @@ import VideoSidebar from "./VideoSidebar";
 import LectureContent from "./LectureContent";
 import LectureNavigation from "./LectureNavigation";
 import MobileSidebar from "./MobileSidebar";
+import CourseProgress from "./CourseProgress";
 
 export default function ViewCourse() {
   const { courseId } = useParams();
@@ -193,6 +194,12 @@ const progress =
             totalLectures={totalLectures}
             completedLectures={completedLectures.length}
           />
+
+          <CourseProgress
+  totalLectures={totalLectures}
+  completedLectures={completedLectures.length}
+  courseId={courseId}
+/>
 
           {/* Video */}
 

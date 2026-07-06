@@ -68,14 +68,20 @@ exports.markLectureComplete = async (req, res) => {
 
     if (completedCount === totalLectures) {
       let certificate = await Certificate.findOne({
-        user: userId,
+        student: userId,
         course: courseId,
       });
 
       if (!certificate) {
         const certificateData = await generateCertificateData(userId, courseId);
 
-        certificate = await Certificate.create(certificateData);
+        certificate = await Certificate.create({
+          student: certificateData.student,
+          course: certificateData.course,
+          instructor: certificateData.instructor,
+          certificateId: certificateData.certificateId,
+          completionDate: certificateData.completionDate,
+        });
       }
 
       certificateUnlocked = true;

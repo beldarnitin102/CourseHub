@@ -34,10 +34,6 @@ router.get(
 // Download Certificate
 // ==========================================
 
-router.get(
-  "/download/:certificateId",
-  auth,
-  downloadCertificate
-);
+router.get("/download/:certificateId", auth, downloadCertificate);
 
 module.exports = router;
