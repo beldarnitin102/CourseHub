@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import { apiConnector } from "../../services/apiconnector"; 
+
 import {
   getCertificate,
   downloadCertificate,
@@ -32,20 +34,41 @@ export default function Certificate() {
 const fetchCertificate = async () => {
   setLoading(true);
 
-  const response = await getCertificate(courseId, token);
+  // 1. Try to fetch an existing certificate first
+  let response = await getCertificate(courseId, token);
 
-  // Only assign state if the server explicitly confirms database record exists
+  // 2. If it doesn't exist (returns false/null), automatically try to generate it
+  if (!response || !response.success) {
+    console.log("ℹ️ Certificate not found. Attempting automatic generation...");
+    
+    try {
+      // Direct call to your backend generate route
+      const generateResponse = await apiConnector(
+        "POST",
+        `http://localhost:3000/api/v1/certificate/generate`, // Make sure port matches your server
+        { courseId },
+        { Authorization: `Bearer ${token}` }
+      );
+
+      if (generateResponse?.data?.success) {
+        console.log("✅ Certificate automatically generated successfully!");
+        response = generateResponse.data; // Assign the newly generated certificate data
+      }
+    } catch (error) {
+      console.log("❌ Auto-generation skipped:", error.response?.data?.message || error.message);
+    }
+  }
+
+  // 3. Update the state with whatever layout data we resolved
   if (response && response.success) {
     setCertificate(response.data);
   } else {
-    // Keeps state null so <LockedCertificate /> renders seamlessly
+    // If progress is not 100%, it falls back to the Locked screen layout smoothly
     setCertificate(null); 
   }
 
   setLoading(false);
 };
-
-
 
   const handleDownload = async () => {
   // Ensure certificate data exists and pass its specific database ID

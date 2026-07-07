@@ -19,6 +19,11 @@ exports.generateCertificateController = async (req, res) => {
 
     const certificate = await generateCertificate(userId, courseId);
 
+    certificate = await Certificate.findById(certificate._id)
+      .populate("student", "firstName lastName email")
+      .populate("course", "courseName")
+      .populate("instructor", "firstName lastName");
+
     return res.status(200).json({
       success: true,
       message: "Certificate generated successfully.",
@@ -55,6 +60,7 @@ exports.getCertificate = async (req, res) => {
         message: "Certificate not found.",
       });
     }
+    
 
     return res.status(200).json({
       success: true,

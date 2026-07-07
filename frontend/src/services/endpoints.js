@@ -91,5 +91,6 @@ export const recommendationEndpoints = {
 
 export const certificateEndpoints = {
   GET_CERTIFICATE: `${BASE_URL}/certificate`,
-  DOWNLOAD_CERTIFICATE: `${BASE_URL}/certificate/download`,
+  DOWNLOAD_CERTIFICATE: `${BASE_URL}/certificate/download`, // Express will now match this correctly
 };
+

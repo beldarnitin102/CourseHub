@@ -15,34 +15,38 @@ export const getCertificate = async (courseId, token) => {
 
     return response.data;
   } catch (error) {
-    // If the server explicitly sent a response (like our 404 message payload)
-     if (error.response && error.response.data) {
-      return error.response.data; 
+    // Catching the backend 404 payload cleanly so React can safely render <LockedCertificate />
+    if (error.response && error.response.status === 404) {
+      console.log("ℹ️ Certificate record does not exist yet for this course. Showing lock screen.");
+      return { success: false, data: null };
     }
-    console.log("Network or unexpected error:", error);
+    
+    console.log("Network or unexpected system error:", error);
     return null;
   }
 };
+
 
 // Change this: export const downloadCertificate = async (courseId, token) => {
 // To this:
 export const downloadCertificate = async (certificateId, token) => {
   try {
+    // Append a unique timestamp flag parameter to completely break any old browser network cache
+    const targetUrl = `${certificateEndpoints.DOWNLOAD_CERTIFICATE}/${certificateId}?cb=${Date.now()}`;
     
-    const response = await axios.get(
-      `${certificateEndpoints.DOWNLOAD_CERTIFICATE}/${certificateId}`, // Sends certificateId now
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        responseType: "blob",
+    console.log("🚀 FORCING AXIOS NETWORK ROUTE TO:", targetUrl);
+
+    const response = await axios.get(targetUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+      responseType: "blob",
+    });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.download = "certificate.pdf";
+    link.download = `certificate-${certificateId}.pdf`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -51,4 +55,3 @@ export const downloadCertificate = async (certificateId, token) => {
     console.log("Error downloading certificate:", error);
   }
 };
-

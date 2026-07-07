@@ -54,11 +54,25 @@ exports.generateCertificate = async (userId, courseId) => {
       "CERT-" +
       crypto.randomBytes(4).toString("hex").toUpperCase();
 
+    let instructorId = null;
+
+    if (Array.isArray(course.instructor)) {
+      // If it is an array, grab the first instructor's ID safely
+      instructorId = course.instructor[0]?._id || course.instructor[0];
+    } else {
+      // If it's a single item/object
+      instructorId = course.instructor?._id || course.instructor;
+    }
+
+    if (!instructorId) {
+      throw new Error("No instructor found associated with this course.");
+    }
+
     // Create certificate
     const certificate = await Certificate.create({
       student: userId,
       course: courseId,
-      instructor: course.instructor._id,
+      instructor:  instructorId,
       certificateId,
       completionDate: new Date(),
     });
