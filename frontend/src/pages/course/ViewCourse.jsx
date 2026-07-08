@@ -9,6 +9,8 @@ import {
   updateLastViewedLecture,
 } from "../../services/operations/courseProgressAPI";
 
+import CourseHero from "./CourseHero";
+
 import CourseHeader from "./CourseHeader";
 import VideoPlayer from "./VideoPlayer";
 import VideoSidebar from "./VideoSidebar";
@@ -39,19 +41,19 @@ export default function ViewCourse() {
     );
   }, [course]);
 
-  const completedSections = course?.courseContent
-  ?.filter((section) =>
-    section.subSection.every((lecture) =>
-      completedLectures.includes(lecture._id)
-    )
-  )
-  ?.map((section) => section.sectionName) || [];
+  const completedSections =
+    course?.courseContent
+      ?.filter((section) =>
+        section.subSection.every((lecture) =>
+          completedLectures.includes(lecture._id),
+        ),
+      )
+      ?.map((section) => section.sectionName) || [];
 
-const progress =
-  totalLectures > 0
-    ? Math.round((completedLectures.length / totalLectures) * 100)
-    : 0;
-
+  const progress =
+    totalLectures > 0
+      ? Math.round((completedLectures.length / totalLectures) * 100)
+      : 0;
 
   useEffect(() => {
     fetchCourseDetails();
@@ -98,8 +100,6 @@ const progress =
       setLoading(false);
     }
   };
-
-  
 
   const allLectures =
     course?.courseContent?.flatMap((section) => section.subSection) || [];
@@ -177,7 +177,7 @@ const progress =
           setSelectedLecture={setSelectedLecture}
         />
 
-        <main className="space-y-6 p-6">
+        <main className="space-y-8 bg-slate-100 p-8">
           {/* Back */}
 
           <button
@@ -189,46 +189,50 @@ const progress =
 
           {/* Header */}
 
-          <CourseHeader
+          <CourseHero
             course={course}
             totalLectures={totalLectures}
             completedLectures={completedLectures.length}
           />
 
-          <CourseProgress
-  totalLectures={totalLectures}
-  completedLectures={completedLectures.length}
-  courseId={courseId}
-/>
+          <div className="overflow-hidden rounded-3xl bg-white shadow-xl">
+            <div className="p-8">
+              <VideoPlayer
+                selectedLecture={selectedLecture}
+                onVideoEnd={handleVideoEnd}
+              />
+            </div>
 
-          {/* Video */}
+            <div className="border-t">
+              <LectureContent
+                course={course}
+                selectedLecture={selectedLecture}
+                courseId={courseId}
+                completed={completedLectures.includes(selectedLecture?._id)}
+                markCompleted={markCompleted}
+                completedSections={completedSections}
+                progress={progress}
+              />
+            </div>
 
-          <VideoPlayer
-            selectedLecture={selectedLecture}
-            onVideoEnd={handleVideoEnd}
-          />
+            {/* <div className="border-t p-8">
+              <CourseProgress
+                totalLectures={totalLectures}
+                completedLectures={completedLectures.length}
+                courseId={courseId}
+              />
+            </div> */}
 
-          {/* Lecture */}
-
-          <LectureContent
-           course={course}
-            selectedLecture={selectedLecture}
-            courseId={courseId}
-            completed={completedLectures.includes(selectedLecture?._id)}
-            markCompleted={markCompleted}
-              completedSections={completedSections}
-    progress={progress}
-          />
-
-          {/* Navigation */}
-
-          <LectureNavigation
-            previousLecture={previousLecture}
-            nextLecture={nextLecture}
-            setSelectedLecture={setSelectedLecture}
-            markCompleted={markCompleted}
-            completed={completedLectures.includes(selectedLecture?._id)}
-          />
+            <div className="border-t p-8">
+              <LectureNavigation
+                previousLecture={previousLecture}
+                nextLecture={nextLecture}
+                setSelectedLecture={setSelectedLecture}
+                markCompleted={markCompleted}
+                completed={completedLectures.includes(selectedLecture?._id)}
+              />
+            </div>
+          </div>
         </main>
       </div>
     </div>
