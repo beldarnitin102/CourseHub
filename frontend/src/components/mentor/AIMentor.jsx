@@ -1,127 +1,195 @@
-import { useState } from "react";
-import {
-  Sparkles,
-  Send,
-  BrainCircuit,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bot, User, Send, Sparkles, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 
-export default function AIMentor({
-  onAsk,
-  loading,
-}) {
+export default function AIMentor({ loading, onAsk }) {
   const [question, setQuestion] = useState("");
 
-  const suggestions = [
-    "Explain this lecture in simple words",
-    "Give me interview questions",
-    "Summarize this topic",
-    "Create MCQs from this lecture",
-  ];
+  const [messages, setMessages] = useState([
+    {
+      type: "assistant",
+      text: "Hi 👋 I'm your AI Mentor. Ask me anything about this lecture, concepts, interview questions, or real-world examples.",
+    },
+  ]);
 
-  const handleSubmit = () => {
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
+
+  const handleSubmit = async () => {
     if (!question.trim()) return;
 
-    onAsk(question);
+    const userMessage = question;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "user",
+        text: userMessage,
+      },
+    ]);
+
     setQuestion("");
+
+    const response = await onAsk(userMessage);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "assistant",
+        text:
+          response?.answer ||
+          response?.data ||
+          response ||
+          "Sorry, I couldn't generate an answer.",
+      },
+    ]);
   };
 
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+  const suggestions = [
+    "Explain this topic in simple words",
+    "Give me interview questions",
+    "Summarize this lecture",
+    "Real-world example",
+  ];
 
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
 
-      <div className="flex items-center justify-between border-b border-slate-100 px-8 py-6">
-
-        <div className="flex items-center gap-4">
-
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg">
-            <BrainCircuit size={28} />
-          </div>
-
-          <div>
-
-            <h2 className="text-2xl font-bold text-slate-900">
-              AI Mentor
-            </h2>
-
-            <p className="text-sm text-slate-500">
-              Ask anything about this lecture
-            </p>
-
-          </div>
-
+      <div className="flex items-center gap-3 border-b px-6 py-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100">
+          <Bot className="text-violet-600" />
         </div>
 
-        <span className="rounded-full bg-green-100 px-4 py-1 text-xs font-semibold text-green-700">
-          ● Online
-        </span>
+        <div>
+          <h3 className="font-semibold text-slate-800">AI Mentor</h3>
 
+          <p className="text-sm text-slate-500">
+            Learn faster with personalized explanations
+          </p>
+        </div>
       </div>
 
       {/* Suggestions */}
 
-      <div className="px-8 pt-6">
+      <div className="flex flex-wrap gap-2 border-b p-5">
+        {suggestions.map((item) => (
+          <button
+            key={item}
+            onClick={() => setQuestion(item)}
+            className="rounded-full border bg-slate-50 px-4 py-2 text-sm transition hover:bg-violet-50 hover:border-violet-300"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
 
-        <p className="mb-3 text-sm font-semibold text-slate-700">
-          Quick Suggestions
-        </p>
+      {/* Chat */}
 
-        <div className="flex flex-wrap gap-3">
-
-          {suggestions.map((item) => (
-            <button
-              key={item}
-              onClick={() => setQuestion(item)}
-              className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700"
+      <div className="h-[420px] overflow-y-auto px-6 py-5 space-y-5">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex ${
+              msg.type === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`flex max-w-[80%] gap-3 ${
+                msg.type === "user" ? "flex-row-reverse" : ""
+              }`}
             >
-              {item}
-            </button>
-          ))}
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full
 
-        </div>
+                ${
+                  msg.type === "user"
+                    ? "bg-blue-600 text-white"
+                    : "bg-violet-100 text-violet-700"
+                }`}
+              >
+                {msg.type === "user" ? <User size={18} /> : <Bot size={18} />}
+              </div>
 
+              <div
+                className={`rounded-2xl px-5 py-4 text-[15px] leading-7
+    ${
+      msg.type === "user"
+        ? "bg-blue-600 text-white"
+        : "bg-slate-100 text-slate-700"
+    }`}
+              >
+                {msg.type === "assistant" ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                ) : (
+                  msg.text
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {loading && (
+          <div className="flex gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100">
+              <Bot size={18} className="text-violet-700" />
+            </div>
+
+            <div className="flex items-center gap-2 rounded-xl bg-slate-100 px-5 py-4">
+              <Loader2 className="animate-spin" size={18} />
+
+              <span>Thinking...</span>
+            </div>
+          </div>
+        )}
+
+        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
 
-      <div className="px-8 py-6">
-
-        <textarea
-          rows={6}
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Example: Explain closures in JavaScript with real-world examples..."
-          className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 p-5 text-[15px] outline-none transition focus:border-violet-500 focus:bg-white"
-        />
-
-        <div className="mt-6 flex items-center justify-between">
-
-          <p className="text-sm text-slate-400">
-            AI may occasionally make mistakes.
-          </p>
+      <div className="border-t p-5">
+        <div className="flex gap-3">
+          <input
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSubmit();
+              }
+            }}
+            placeholder="Ask anything about this lecture..."
+            className="flex-1 rounded-xl border px-5 py-3 outline-none transition focus:border-violet-500"
+          />
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white transition hover:bg-violet-700 disabled:opacity-60"
           >
-            {loading ? (
-              <>
-                <Sparkles className="animate-spin" size={18} />
-                Thinking...
-              </>
-            ) : (
-              <>
-                <Send size={18} />
-                Ask Mentor
-              </>
-            )}
+            <Send size={18} />
+            Ask
           </button>
-
         </div>
 
+        <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
+          <Sparkles size={14} />
+          AI answers may occasionally make mistakes. Verify important
+          information.
+        </div>
       </div>
-
     </div>
   );
 }
