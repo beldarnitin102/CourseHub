@@ -1,24 +1,13 @@
 import { apiConnector } from "../apiconnector";
 import { lectureNoteEndpoints } from "../endpoints";
 
-const {
-  SAVE_NOTE,
-  GET_NOTE,
-} = lectureNoteEndpoints;
+const { SAVE_NOTE, GET_NOTE } = lectureNoteEndpoints;
 
-export const saveLectureNote = async (
-  data,
-  token
-) => {
+export const saveLectureNote = async (data, token) => {
   try {
-    const response = await apiConnector(
-      "POST",
-      SAVE_NOTE,
-      data,
-      {
-        Authorization: `Bearer ${token}`,
-      }
-    );
+    const response = await apiConnector("POST", SAVE_NOTE, data, {
+      Authorization: `Bearer ${token}`,
+    });
 
     return response.data;
   } catch (error) {
@@ -26,11 +15,7 @@ export const saveLectureNote = async (
   }
 };
 
-export const getLectureNote = async (
-  courseId,
-  lectureId,
-  token
-) => {
+export const getLectureNote = async (courseId, lectureId, token) => {
   try {
     const response = await apiConnector(
       "GET",
@@ -38,7 +23,7 @@ export const getLectureNote = async (
       null,
       {
         Authorization: `Bearer ${token}`,
-      }
+      },
     );
 
     return response.data;
