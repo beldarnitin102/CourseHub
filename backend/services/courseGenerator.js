@@ -49,7 +49,7 @@ exports.createCourseFromAI = async (
 
     thumbnail: courseThumbnail,
 
-    price: 30,
+    price: 15,
 
     aiResources
 });

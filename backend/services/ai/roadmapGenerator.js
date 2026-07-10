@@ -57,7 +57,19 @@ For each stage, detail its targeted projects, key milestones, and an estimated d
     });
 
     
-return parseAIJSON(response.message.content[0].text);
+    // Safety check: ensure the response structure exists before reading it
+    if (!response || !response.message || !response.message.content || response.message.content.length === 0) {
+      throw new Error("Empty or malformed response received from Cohere API.");
+    }
+
+    const rawText = response.message.content[0].text;
+    
+    if (!rawText) {
+      throw new Error("Cohere response content did not contain any text.");
+    }
+
+    return parseAIJSON(rawText);
+
 
 
   } catch (err) {

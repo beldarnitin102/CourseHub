@@ -52,6 +52,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/certificate", certificateRoutes);
+app.use("/api/v1/lecture", lectureNoteRoutes)
 
 app.get("/", (req, res) => {
   res.send("<h1>Your server is up and running  </h1>");

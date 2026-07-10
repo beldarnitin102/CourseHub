@@ -75,9 +75,7 @@ exports.capturePayment = async (req, res) => {
 
 exports.verifySignature = async (req, res) => {
 try {
-  console.log("VERIFY HIT");
-console.log(req.body);
-console.log(req.user);
+
 const {
 razorpay_order_id,
 razorpay_payment_id,

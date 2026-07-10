@@ -58,13 +58,13 @@ exports.generateCourseFromPlaylist = async (req, res) => {
       videoId: video.videoId,
       title: video.title,
       description: video.description
-        ? video.description.slice(0, 300) // trim to avoid token bloat
+        ? video.description.slice(0, 30) // trim to avoid token bloat
         : "",
     }));
 
     // ── 3. Call Groq LLM ────────────────────────────────────────────
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant",
       response_format: { type: "json_object" }, // forces strictly valid JSON
       messages: [
         {
