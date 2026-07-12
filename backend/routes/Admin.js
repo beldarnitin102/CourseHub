@@ -17,7 +17,7 @@ const {
   deleteCategory,
 } = require("../controllers/Admin/categories");
 
-const { getInstructorDetails , getStudentDetails } = require("../controllers/admin/userController");
+const { getInstructorDetails , getStudentDetails } = require("../controllers/Admin/userController");
 
 
 router.get("/student/:id", auth, isAdmin, getStudentDetails);
