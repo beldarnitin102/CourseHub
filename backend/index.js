@@ -32,7 +32,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://course-hub-eight-lemon.vercel.app/",
+    ],
+
     credentials: true,
   }),
 );
@@ -52,7 +56,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/certificate", certificateRoutes);
-app.use("/api/v1/lecture", lectureNoteRoutes)
+app.use("/api/v1/lecture", lectureNoteRoutes);
 
 app.get("/", (req, res) => {
   res.send("<h1>Your server is up and running  </h1>");
