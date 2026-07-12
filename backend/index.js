@@ -32,12 +32,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://course-hub-eight-lemon.vercel.app/",
-    ],
-
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(
@@ -53,7 +51,6 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/ai", AI);
 app.use("/api/v1/progress", courseProgressRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/certificate", certificateRoutes);
 app.use("/api/v1/lecture", lectureNoteRoutes);
