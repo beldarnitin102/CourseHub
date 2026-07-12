@@ -6,7 +6,7 @@ exports.getInstructorDetails = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const instructor = await User.findById(id)
+    const instructor = await User.findById(id) 
       .populate("additionalDetails")
       .select("-password");
 
