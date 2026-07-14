@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import AdminLayout from "../../components/dashboard/AdminLayout";
 import { getAllUsers } from "../../services/operations/adminAPI";
+import Loader from "../../components/Loader";
 
 export default function Users() {
   const { token } = useSelector((state) => state.auth);
@@ -134,7 +135,7 @@ export default function Users() {
               {loading ? (
                 <tr>
                   <td colSpan="4" className="p-12 text-center text-lg">
-                    Loading...
+                     <Loader />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (

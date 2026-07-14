@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import AdminLayout from "../../components/dashboard/AdminLayout";
 
 import { getStudentDetails } from "../../services/operations/adminAPI";
+import Loader from "../../components/Loader";
 
 export default function StudentDetails() {
 
@@ -37,7 +38,7 @@ export default function StudentDetails() {
 
     return (
       <AdminLayout>
-        Loading...
+         <Loader />;
       </AdminLayout>
     );
 

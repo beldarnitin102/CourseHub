@@ -59,7 +59,6 @@ exports.createCourse = async (req, res) => {
     console.log("Category:", category);
 
     if (!CategoreyDetails) {
-      console.log(err.message);
       return res.status(400).json({
         success: false,
         message: " category details are not found",

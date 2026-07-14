@@ -11,6 +11,7 @@ import {
 
 import LockedCertificate from "../../components/certificate/LockedCertificate";
 import CertificateCard from "../../components/certificate/CertificateCard";
+import Loader from "../Loader";
 
 export default function Certificate() {
   const { courseId } = useParams();
@@ -79,12 +80,8 @@ const fetchCertificate = async () => {
   }
 };
 
-  if (loading) {
-    return (
-      <div className="p-10">
-        Loading...
-      </div>
-    );
+    if (loading) {
+    return <Loader />;
   }
 
   return (

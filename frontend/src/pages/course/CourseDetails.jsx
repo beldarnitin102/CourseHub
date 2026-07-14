@@ -9,6 +9,7 @@ import CourseContent from "../../components/course/CourseContent";
 import {
   getCourseDetails,
 } from "../../services/operations/courseAPI";
+import Loader from "../../components/Loader";
 
 export default function CourseDetails() {
   const { courseId } = useParams();
@@ -32,11 +33,8 @@ export default function CourseDetails() {
   };
 
   if (!course) {
-  return (
-    <div className="p-10">
-      Loading...
-    </div>
-  );
+  return <Loader />;
+  ;
 }
 
   return (

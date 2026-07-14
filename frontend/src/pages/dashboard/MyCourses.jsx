@@ -2,39 +2,38 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-
-
 import DashboardLayout from "../../pages/dashboard/DashboardLayout";
 
 import { getUserEnrolledCourses } from "../../services/operations/profileAPI";
+import Loader from "../../components/Loader";
 
 export default function MyCourses() {
   const navigate = useNavigate();
-  
+
   const { token } = useSelector((state) => state.auth);
 
   const [courses, setCourses] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
-  const fetchCourses = async () => {
-    const result = await getUserEnrolledCourses(token);
-    
-    // Check if result has a .data property or fallback to an empty array
-    const coursesArray = result?.data || result || [];
-    
-    setCourses(Array.isArray(coursesArray) ? coursesArray : []);
-    setLoading(false);
-  };
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const result = await getUserEnrolledCourses(token);
 
-  fetchCourses();
-}, [token]);
+      // Check if result has a .data property or fallback to an empty array
+      const coursesArray = result?.data || result || [];
+
+      setCourses(Array.isArray(coursesArray) ? coursesArray : []);
+      setLoading(false);
+    };
+
+    fetchCourses();
+  }, [token]);
 
   if (loading) {
     return (
       <DashboardLayout>
-        <h1 className="text-3xl font-bold">Loading...</h1>
+        <Loader />;
       </DashboardLayout>
     );
   }

@@ -7,6 +7,7 @@ import {
   getCourseDetailsAdmin,
   deleteCourse,
 } from "../../services/operations/adminAPI";
+import Loader from "../../components/Loader";
 
 export default function AdminCourseDetails() {
   const { courseId } = useParams();
@@ -42,7 +43,7 @@ export default function AdminCourseDetails() {
   if (!course) {
     return (
       <AdminLayout>
-        <div className="py-20 text-center text-xl">Loading...</div>
+        <Loader />;
       </AdminLayout>
     );
   }

@@ -13,6 +13,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../../services/operations/adminCategoryAPI";
+import Loader from "../../components/Loader";
 
 export default function Categories() {
   const { token } = useSelector((state) => state.auth);
@@ -147,9 +148,7 @@ export default function Categories() {
       </div>
 
       {loading ? (
-        <div className="py-20 text-center text-xl">
-          Loading...
-        </div>
+          <Loader/>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {filteredCategories.map((category) => (

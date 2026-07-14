@@ -18,6 +18,7 @@ import LectureContent from "./LectureContent";
 import LectureNavigation from "./LectureNavigation";
 import MobileSidebar from "./MobileSidebar";
 import CourseProgress from "./CourseProgress";
+import Loader from "../../components/Loader";
 
 export default function ViewCourse() {
   const { courseId } = useParams();
@@ -142,12 +143,9 @@ export default function ViewCourse() {
     updateLastViewedLecture(courseId, selectedLecture._id, token);
   }, [selectedLecture]);
 
-  if (loading)
-    return (
-      <div className="flex h-screen items-center justify-center text-2xl">
-        Loading...
-      </div>
-    );
+    if (loading) {
+    return <Loader />;
+  }
 
   if (!course)
     return (
