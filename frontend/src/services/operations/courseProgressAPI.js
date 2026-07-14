@@ -1,8 +1,7 @@
 import { apiConnector } from "../apiconnector";
 import { courseProgressEndpoints } from "../endpoints";
 
-const BASE_URL =
-  "http://localhost:3000/api/v1/progress";
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL + "/progress";
 
 export const markLectureComplete = async (
   courseId,

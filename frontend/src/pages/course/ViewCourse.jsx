@@ -64,7 +64,7 @@ export default function ViewCourse() {
       setLoading(true);
 
       const response = await axios.get(
-        `http://localhost:3000/api/v1/course/getCourseDetails/${courseId}`,
+        `${import.meta.env.VITE_APP_BASE_URL}/course/getCourseDetails/${courseId}`,
       );
 
       const courseData = response.data.data;

@@ -1,7 +1,7 @@
 import { apiConnector } from "../apiconnector";
 
-const BASE_URL =
-"http://localhost:3000/api/v1/ai";
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL + "/ai";
+
 
 export const generateCourse =
 async (data, token) => {

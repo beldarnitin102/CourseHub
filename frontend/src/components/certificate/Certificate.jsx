@@ -45,7 +45,7 @@ const fetchCertificate = async () => {
       // Direct call to your backend generate route
       const generateResponse = await apiConnector(
         "POST",
-        `http://localhost:3000/api/v1/certificate/generate`, // Make sure port matches your server
+        `${import.meta.env.VITE_APP_BASE_URL}/certificate/generate`, // Make sure port matches your server
         { courseId },
         { Authorization: `Bearer ${token}` }
       );
