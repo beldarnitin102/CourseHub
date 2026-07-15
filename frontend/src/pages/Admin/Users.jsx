@@ -135,7 +135,7 @@ export default function Users() {
               {loading ? (
                 <tr>
                   <td colSpan="4" className="p-12 text-center text-lg">
-                     <Loader />
+                    <Loader />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (

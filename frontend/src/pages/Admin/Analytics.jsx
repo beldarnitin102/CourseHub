@@ -11,6 +11,7 @@ import {
 
 import AdminLayout from "../../components/dashboard/AdminLayout";
 import { getDashboardStats } from "../../services/operations/adminAPI";
+import Loader from "../../components/Loader";
 
 export default function Analytics() {
   const { token } = useSelector((state) => state.auth);
@@ -33,7 +34,7 @@ export default function Analytics() {
     return (
       <AdminLayout>
         <div className="flex h-96 items-center justify-center text-xl font-semibold">
-          Loading Analytics...
+           <Loader />;
         </div>
       </AdminLayout>
     );
