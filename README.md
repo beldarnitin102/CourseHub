@@ -182,6 +182,8 @@ VITE_APP_BASE_URL=
 
 # 👥 Demo Accounts
 
+## Pass for All Accounts = 123456
+
 ## 🔑 Admin
 
 **Email**
