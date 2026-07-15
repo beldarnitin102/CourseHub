@@ -17,7 +17,7 @@ const mailSender = async (email, title, body) => {
     console.log("SMTP verified successfully");
 
     let info = await transporter.sendMail({
-      from: `StudyNotion || Codehelp - by Nitin <beldarjon@gmail.com>`,
+      from: `StudyNotion || Codehelp - by Nitin <beldarjon@11665422.brevosend.com>`,
       to: `${email}`,
       subject: `${title}`,
       html: `${body}`,
