@@ -13,6 +13,41 @@ https://course-hub-eight-lemon.vercel.app/
 https://coursehub-49up.onrender.com
 
 ---
+# 👥 Demo Accounts
+
+## Pass for All Accounts = 123456
+
+## 🔑 Admin
+
+**Email**
+
+```
+beldarnitin845@gmail.com
+```
+
+---
+
+## 👨‍🏫 Instructor
+
+**Email**
+
+```
+beldarnitin940@gmail.com
+```
+
+---
+
+## 👨‍🎓 Student
+
+**Email**
+
+```
+beldarnitin294@gmail.com
+```
+
+> **Note:** Passwords are not included publicly. Please contact the repository owner if access is required.
+
+---
 
 # ✨ Features
 
@@ -177,42 +212,6 @@ FRONTEND_URL=
 ```env
 VITE_APP_BASE_URL=
 ```
-
----
-
-# 👥 Demo Accounts
-
-## Pass for All Accounts = 123456
-
-## 🔑 Admin
-
-**Email**
-
-```
-beldarnitin845@gmail.com
-```
-
----
-
-## 👨‍🏫 Instructor
-
-**Email**
-
-```
-beldarnitin940@gmail.com
-```
-
----
-
-## 👨‍🎓 Student
-
-**Email**
-
-```
-beldarnitin294@gmail.com
-```
-
-> **Note:** Passwords are not included publicly. Please contact the repository owner if access is required.
 
 ---
 
